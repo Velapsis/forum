@@ -1,8 +1,9 @@
 package web
 
 import (
-	"net/http"
+	"fmt"
 	"html/template"
+	"net/http"
 )
 
 func CreateWebsite() {
@@ -12,22 +13,24 @@ func CreateWebsite() {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	ParseTemplate("web\templates\index.html")
+	ParseTemplate(w, "web/index.html")
 }
 
-func ParseTemplate(w http.ResponseWriter, template string) {
-	tmpl, err := template.ParseFiles(template)
+func ParseTemplate(w http.ResponseWriter, tempPath string) {
+	tmpl, err := template.ParseFiles(tempPath)
 
-	if err != nil {
+	// Error management
+	if tmpl == nil {
+		fmt.Println("Error parsing template: ", tempPath, " does not exist")
+	} else if err != nil {
 		fmt.Println("Error parsing template:", err)
-		fmt.Println("Template path: ", web.Template)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
-	err = tmpl.Execute(w, artists)
-	if err != nil {
-		fmt.Println("Error executing template:", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
+	// err = tmpl.Execute(w, )
+	// if err != nil {
+	// 	fmt.Println("Error executing template:", err)
+	// 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	// }
 }
