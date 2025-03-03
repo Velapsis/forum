@@ -1,6 +1,7 @@
 package logic
 
 func Init() {
+
 	// Define website routes
 	web.Home = ""
 	web.Login = ""
