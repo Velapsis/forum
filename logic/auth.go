@@ -3,6 +3,7 @@ package logic
 import (
 	"fmt"
 	"hash/fnv"
+	"regexp"
 )
 
 func Login(username string, passwd string) {
@@ -33,15 +34,29 @@ func IsLegit(username string, email string, passwd string) bool {
 	}
 
 	// Regex check
-	if username != regex.Username {
+	isUsernameValid, _ := regexp.MatchString(regex.Username, username)
+	isEmailValid, _ := regexp.MatchString(regex.Email, email)
+	if isUsernameValid {
 		fmt.Println("Username is not valid")
 		return false
-	} else if email != regex.Email {
+	} else if isEmailValid {
 		fmt.Println("Email is not valid")
 		return false
-	} else if passwd != regex.Password {
-		fmt.Println("Password is not valid")
+	}
+
+	// Password check
+	if len(passwd) < 5 {
+		fmt.Println("Password is not valid: Too short")
 		return false
+	}
+	hasCapsLetter, _ := regexp.MatchString(`[A-Z]{1}$`, passwd)
+	if !hasCapsLetter {
+		fmt.Println("Password is not valid: No capital letter")
+		return false
+	}
+	hasOneNumber, _ := regexp.MatchString(`[0-9]{1}$`, passwd)
+	if !hasOneNumber {
+		fmt.Println("Password is not valid: No number")
 	}
 
 	// Database check

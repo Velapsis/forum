@@ -6,10 +6,21 @@ import (
 	"net/http"
 )
 
+func Init() {
+
+	// Define website data
+	web.Database = "web/database/forum.db"
+	web.Port = ":8080"
+
+	// Define website routes
+	web.Home = ""
+	web.Login = ""
+}
+
 func CreateWebsite() {
 	http.HandleFunc("/", Index)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(web.Port, nil)
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {

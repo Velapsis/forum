@@ -2,12 +2,7 @@ package logic
 
 func Init() {
 
-	// Define website routes
-	web.Home = ""
-	web.Login = ""
-
 	// Define regex
-	regex.Username = ""
-	regex.Email = ""
-	regex.Password = ""
+	regex.Username = `[a-zA-Z0-9_]$`
+	regex.Email = `[a-zA-Z0-9]@[a-z].[a-z]$`
 }
