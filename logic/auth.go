@@ -3,6 +3,8 @@ package logic
 import (
 	"fmt"
 	"hash/fnv"
+	web "main/web/database"
+	"math/rand/v2"
 	"regexp"
 )
 
@@ -11,13 +13,14 @@ func Login(username string, passwd string) {
 
 // Registers a new user with provided data
 func Register(username string, email string, passwd string) {
+
 	if IsLegit(username, email, passwd) {
 		// DEBUG ONLY
 		user.Username = username
 		user.Email = email
 		user.Password = passwd
 		user.UUID = GenerateUUID(username)
-		// TODO: INSERT USER IN DATABASE
+		web.AddUser(sql.InsertRequest, username, email, passwd)
 	}
 }
 
@@ -67,7 +70,12 @@ func IsLegit(username string, email string, passwd string) bool {
 }
 
 func GenerateUUID(username string) int {
+	if username == "" {
+		fmt.Println("Error: Cannot generate UUID if username is null")
+		return 0
+	}
 	uuid := fnv.New32a()
 	uuid.Write([]byte(username))
-	return int(uuid.Sum32())
+	random := rand.IntN(9999999)
+	return int(uuid.Sum32()) + random
 }

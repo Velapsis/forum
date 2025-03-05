@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+var database *sql.DB
+
 func Init() {
 
 	// Opens the database
@@ -37,4 +39,15 @@ func Init() {
 	// Closes database when main() stops running
 	defer database.Close()
 
+}
+
+func AddUser(request string, username string, email string, password string) {
+
+	// Execute database with provided request
+	output, err := database.Exec(request, username, email, password)
+	fmt.Println("Exec database output: ", output)
+	if err != nil {
+		fmt.Println("Error while attempting to add user ", username, " to database")
+		fmt.Println("Error: ", err)
+	}
 }
