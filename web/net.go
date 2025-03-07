@@ -27,7 +27,7 @@ func CreateWebsite() {
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/index.html")
-	println("Executing index..")
+	println("Executing index on port: ", web.Port)
 }
 
 func ParseTemplate(w http.ResponseWriter, tempPath string) {
@@ -43,9 +43,9 @@ func ParseTemplate(w http.ResponseWriter, tempPath string) {
 		return
 	}
 
-	// err = tmpl.Execute(w, )
-	// if err != nil {
-	// 	fmt.Println("Error executing template:", err)
-	// 	http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	// }
+	err = tmpl.Execute(w, "")
+	if err != nil {
+		fmt.Println("Error executing template:", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
