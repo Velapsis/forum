@@ -1,10 +1,12 @@
-package web
+package database
 
 import (
 	"database/sql"
 	"fmt"
 	"io"
 	"os"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var database *sql.DB
@@ -18,7 +20,7 @@ func Init() {
 	}
 
 	// Read SQL file
-	sql, err := os.Open("users.sql")
+	sql, err := os.Open("web/database/users.sql")
 	if err != nil {
 		fmt.Println("Error while reading SQL file: ", err)
 	}

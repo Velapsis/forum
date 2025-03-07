@@ -15,6 +15,8 @@ func Init() {
 	// Define website routes
 	web.Home = ""
 	web.Login = ""
+
+	CreateWebsite()
 }
 
 func CreateWebsite() {
@@ -25,10 +27,12 @@ func CreateWebsite() {
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/index.html")
+	println("Executing index..")
 }
 
 func ParseTemplate(w http.ResponseWriter, tempPath string) {
 	tmpl, err := template.ParseFiles(tempPath)
+	println("Parsing template: ", tempPath)
 
 	// Error management
 	if tmpl == nil {
