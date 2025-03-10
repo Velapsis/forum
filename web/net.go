@@ -26,7 +26,7 @@ func CreateWebsite() {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	ParseTemplate(w, "web/index.html")
+	ParseTemplate(w, "web/login.html")
 	println("Executing index on port: ", web.Port)
 }
 

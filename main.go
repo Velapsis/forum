@@ -1,8 +1,11 @@
 package main
 
-import "main/logic"
+import (
+	"main/logic"
+	"main/web"
+)
 
 func main() {
 	logic.Init()
-
+	web.CreateWebsite()
 }
