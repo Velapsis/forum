@@ -60,8 +60,31 @@ func IsLegit(username string, email string, passwd string) bool {
 	hasOneNumber, _ := regexp.MatchString(`[0-9]{1}$`, passwd)
 	if !hasOneNumber {
 		fmt.Println("Password is not valid: No number")
+		return false
 	}
 
+
+	// Database check for username
+	var existingUsername string
+	err := db.QueryRow("SELECT username FROM user WHERE username = ?", username).Scan(&existingUsername)
+	if err != sql.ErrNoRows {
+		fmt.Println("Username already exists")
+		return false
+	} else if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Database error:", err)
+		return false
+	}
+
+	// Database check for email
+	var existingEmail string
+	err = db.QueryRow("SELECT email FROM user WHERE email = ?", email).Scan(&existingEmail)
+	if err != sql.ErrNoRows {
+		fmt.Println("Email already exists")
+		return false
+	} else if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Database error:", err)
+		return false
+	}
 	// Database check
 	// TODO: CHECK FOR INPUT USERNAME IN THE DATABASE
 	// TODO: CHECK FOR INPUT EMAIL IN THE DATABASE

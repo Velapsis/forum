@@ -39,6 +39,7 @@ CREATE TABLE `answers` (
   `user_id` integer,
   `content` varchar(255),
   FOREIGN KEY (`post_id`) REFERENCES `posts` (`post_id`)
+  FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 );
 
 
