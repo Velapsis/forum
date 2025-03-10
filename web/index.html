@@ -10,19 +10,40 @@
 
 <body>
 
-    <div class="div-login" style="display: flex; flex-direction:column; width:20%">
-        <p class="title"> Login </p>
-        <input type="text" class="text-input" placeholder="Username">
-        <input type="email" class="text-input" placeholder="Email">
-        <input type="password" class="text-input" placeholder="Password">
+<div class="navbar">
+    <form action="/" method="post">
+    <button class="navbar-tab" type="submit"> Home </button>
+    </form>
+    <form action="/" method="post">
+    <button class="navbar-tab" type="submit"> Browse </button>
+    </form>
+    <form action="/" method="post">
+    <button class="navbar-tab" type="submit"> Inbox </button>
+    </form>
+    <form action="/" method="post">
+    <button class="navbar-tab" type="submit"> Profile </button>
+    </form>
 
-        <form action="/login" method="post">
-            <button type="submit" class="btn-login"> Login </button>
-        </form>
-    </div>
-        
+    <input type="text" class="text-query" placeholder="Search for..">
+</div>
     
 </body>
+
+<style>
+
+.navbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.navbar-tab {
+    background-color: aquamarine;
+    cursor: pointer;
+}
+    
+</style>
 
 
 </html>
