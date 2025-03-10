@@ -1,8 +1,10 @@
 package logic
+import "database/sql"
 
 var regex Regex
 var user User
-var sql SQL
+ var Sql SQL
+ var db *sql.DB
 
 type Regex struct {
 	Username string

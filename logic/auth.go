@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"database/sql" // Add this import for sql.ErrNoRows
 	"fmt"
 	"hash/fnv"
 	web "main/web/database"
@@ -8,25 +9,24 @@ import (
 	"regexp"
 )
 
+
 func Login(username string, passwd string) {
 }
 
 // Registers a new user with provided data
 func Register(username string, email string, passwd string) {
-
 	if IsLegit(username, email, passwd) {
 		// DEBUG ONLY
 		user.Username = username
 		user.Email = email
 		user.Password = passwd
 		user.UUID = GenerateUUID(username)
-		web.AddUser(sql.InsertRequest, username, email, passwd)
+		web.AddUser(Sql.InsertRequest, username, email, passwd)
 	}
 }
 
 // Checks if the user inputs already exist in the database
 func IsLegit(username string, email string, passwd string) bool {
-
 	// Null check
 	if username == "" {
 		fmt.Println("Username is null")
@@ -39,10 +39,10 @@ func IsLegit(username string, email string, passwd string) bool {
 	// Regex check
 	isUsernameValid, _ := regexp.MatchString(regex.Username, username)
 	isEmailValid, _ := regexp.MatchString(regex.Email, email)
-	if isUsernameValid {
+	if !isUsernameValid { // Fixed inverted logic
 		fmt.Println("Username is not valid")
 		return false
-	} else if isEmailValid {
+	} else if !isEmailValid { // Fixed inverted logic
 		fmt.Println("Email is not valid")
 		return false
 	}
@@ -63,14 +63,13 @@ func IsLegit(username string, email string, passwd string) bool {
 		return false
 	}
 
-
 	// Database check for username
 	var existingUsername string
 	err := db.QueryRow("SELECT username FROM user WHERE username = ?", username).Scan(&existingUsername)
-	if err != sql.ErrNoRows {
+	if err == nil {
 		fmt.Println("Username already exists")
 		return false
-	} else if err != nil && err != sql.ErrNoRows {
+	} else if err != sql.ErrNoRows {
 		fmt.Println("Database error:", err)
 		return false
 	}
@@ -78,16 +77,13 @@ func IsLegit(username string, email string, passwd string) bool {
 	// Database check for email
 	var existingEmail string
 	err = db.QueryRow("SELECT email FROM user WHERE email = ?", email).Scan(&existingEmail)
-	if err != sql.ErrNoRows {
+	if err == nil {
 		fmt.Println("Email already exists")
 		return false
-	} else if err != nil && err != sql.ErrNoRows {
+	} else if err != sql.ErrNoRows {
 		fmt.Println("Database error:", err)
 		return false
 	}
-	// Database check
-	// TODO: CHECK FOR INPUT USERNAME IN THE DATABASE
-	// TODO: CHECK FOR INPUT EMAIL IN THE DATABASE
 
 	return true
 }

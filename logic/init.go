@@ -13,7 +13,7 @@ func Init() {
 	regex.Email = `[a-zA-Z0-9]@[a-z].[a-z]$`
 
 	// Define SQL requests
-	sql.InsertRequest = `INSERT INTO user (username, email, password) VALUES (?, ?, ?)`
+	Sql.InsertRequest = `INSERT INTO user (username, email, password) VALUES (?, ?, ?)`
 	// sql.UpdateUsernameRequest = `UPDATE user SET username = ? WHERE id = ?`
 	// sql.UpdateEmailRequest = `UPDATE user SET email = ? WHERE id = ?`
 	// sql.UpdatePasswordRequest = `UPDATE user SET password = ? WHERE id = ?`
