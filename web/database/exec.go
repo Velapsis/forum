@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var database *sql.DB
@@ -14,7 +14,7 @@ var database *sql.DB
 func Init() {
 
 	// Opens the database
-	database, err := sql.Open("sqlite3", "forum.db")
+	database, err := sql.Open("mysql", "forum.db")
 	if err != nil {
 		fmt.Println("Error while parsing database: ", err)
 	}
@@ -43,13 +43,3 @@ func Init() {
 
 }
 
-func AddUser(request string, username string, email string, password string) {
-
-	// Execute database with provided request
-	output, err := database.Exec(request, username, email, password)
-	fmt.Println("Exec database output: ", output)
-	if err != nil {
-		fmt.Println("Error while attempting to add user ", username, " to database")
-		fmt.Println("Error: ", err)
-	}
-}
