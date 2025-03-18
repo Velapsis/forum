@@ -4,11 +4,11 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     container_name: forum-app
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8787:8080"
     environment:
       - DB_HOST=db
       - DB_PORT=3306
@@ -17,7 +17,7 @@ services:
       - DB_NAME=forum_db
       - SESSION_SECRET=change_this_to_a_secure_random_string
     volumes:
-      - ./uploads:/app/uploads
+      - ./web/uploads:/app/uploads
     depends_on:
       - db
     networks:
@@ -34,7 +34,7 @@ services:
       - MYSQL_PASSWORD=forum_password
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./init-db:/docker-entrypoint-initdb.d
+      - ./web/database:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
     networks:
