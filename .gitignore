@@ -1,0 +1,54 @@
+# Fichiers binaires compilés
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+forum
+
+# Fichiers de test
+*.test
+*.out
+
+# Fichiers de dépendances
+vendor/
+
+# Fichiers spécifiques à Go
+*.o
+*.a
+*.test
+*.prof
+*.pprof
+*.trace
+/go.work
+
+# Fichiers de build Docker
+.dockerignore
+
+# Fichiers upload
+/uploads/*
+!/uploads/.gitkeep
+
+# Fichiers de configuration locaux
+.env
+.env.local
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers MySQL
+*.sql.gz
+*.dump
+
+# Fichiers de logs
+*.log
+
+# Fichiers de cache
+.cache/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
