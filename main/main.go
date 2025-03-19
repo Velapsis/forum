@@ -2,10 +2,13 @@ package main
 
 import (
 	"fmt"
+	logic "main/logic/"
 	"net/http"
 )
 
 func main() {
+	logic.Init()
+	web.CreateWebsite()
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Bienvenue sur le Forum - Configuration en cours")
 	})
