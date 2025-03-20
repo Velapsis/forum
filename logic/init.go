@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"main/web"
+	"forum/web"
 )
 
 func Init() {
