@@ -13,20 +13,35 @@
 <body>
 
 <div class="navbar">
+    <div style="display: flex; gap: 5px">
     <form action="/" method="post">
-    <button class="navbar-tab" type="submit"> Home </button>
+    <button class="navbar-tab" type="submit"> HOME </button>
     </form>
     <form action="/" method="post">
-    <button class="navbar-tab" type="submit"> Browse </button>
+    <button class="navbar-tab" type="submit"> EXPLORE </button>
     </form>
     <form action="/" method="post">
-    <button class="navbar-tab" type="submit"> Inbox </button>
+    <button class="navbar-tab" type="submit"> MESSAGES </button>
     </form>
-    <form action="/" method="post">
-    <button class="navbar-tab" type="submit"> Profile </button>
-    </form>
-
     <input type="text" class="text-query" placeholder="Search for..">
+    </div>
+
+    <div style="display: flex; justify-content: flex-end;">
+        <form action="/" method="post">
+            <button class="navbar-tab" type="submit"> PROFILE </button>
+        </form>
+    </div>
+</div>
+
+<br>
+<br>
+
+<div class="forum-container">
+
+    <div class="container">
+        <p class="title"> Featured </p>
+    </div>
+
 </div>
 
 <style>
@@ -44,6 +59,7 @@
 
     .navbar {
         display: flex;
+        justify-content: space-between;
         gap: 5px;
         height: 40px;
         background-color: var(--bg-dark);
@@ -80,14 +96,14 @@
         transition: 0.3s;
         font-size: 18px;
         font-family: 'Tiny5';
-        font-weight: 500;
+        font-weight: 600;
     }
     
     .navbar-tab:hover {
         cursor: pointer;
         border-color: aliceblue;
         transform: scale(1.05);
-        font-weight: bold;
+        font-weight: 800;
     }
     
     .text {
@@ -102,6 +118,17 @@
     .text-link:hover {
         text-decoration: underline;
         cursor: pointer;
+    }
+
+    .forum-container {
+        display: flex;
+        justify-content: column;
+    }
+
+    .container {
+        display: flex;
+        justify-content: column;
+        background-color: var(--bg-dark);
     }
         
     </style>
