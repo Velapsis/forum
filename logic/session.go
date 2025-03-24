@@ -31,7 +31,7 @@ func createSession(w http.ResponseWriter, userID int) (*Session, error) {
 
 	// Créer une nouvelle session
 	sessionID := generateUUID()
-	expiresAt := time.Now().Add(2 * time.Hour ) // 7 jours
+	expiresAt := time.Now().Add(2 * time.Hour ) // 2 heures
 	createdAt := time.Now()
 
 	session := &Session{
@@ -74,3 +74,39 @@ func getSessionFromCookie(r *http.Request) *Session {
 	}
 	return &session
 }
+
+func deleteSession(w http.ResponseWriter, sessionID string) error {
+	// Supprimer la session de la base de données
+	_, err := db.Exec("DELETE FROM sessions WHERE id = ?", sessionID)
+	if err != nil {
+	return err
+	}
+   
+  
+	// Supprimer le cookie
+	deleteCookie(w, "session_id")
+   
+  
+	return nil
+   }
+   
+
+func deleteCookie(w http.ResponseWriter, cookieName string) {
+	cookie := &http.Cookie{
+	Name: cookieName,
+	Value: "",
+	Path: "/",
+	HttpOnly: true,
+	Expires: time.Now().AddDate(0, 0, -1), // Définir la date d'expiration dans le passé
+	}
+	http.SetCookie(w, cookie)
+   }
+
+
+   func deleteExpiredSessions() error {
+	_, err := db.Exec("DELETE FROM sessions WHERE expires_at < ?", time.Now())
+	return err
+   }
+
+//  A FAIRE : Fonction de vérification de session
+//  A FAIRE : Fonction de renouvellement de session
