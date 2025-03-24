@@ -55,7 +55,7 @@ func ParseTemplate(w http.ResponseWriter, tempPath string) {
 		return
 	}
 
-	err = tmpl.Execute(w, "")
+	err = tmpl.Execute(w, website)
 	if err != nil {
 		fmt.Println("Error executing template:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

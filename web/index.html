@@ -29,7 +29,11 @@
 
     <div style="display: flex; justify-content: flex-end;">
         <form action="/" method="post">
+            {{if .IsConnected}}
             <button class="navbar-tab" type="submit"> PROFILE </button>
+            {{else}}
+            <button class="navbar-tab" type="submit" href="/login"> SIGN IN </button>
+            {{end}}
         </form>
     </div>
 </div>

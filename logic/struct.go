@@ -14,6 +14,8 @@ type Website struct {
 
 	Home  string
 	Login string
+
+	IsConnected bool
 }
 
 type Regex struct {
