@@ -22,6 +22,7 @@ func InitWebsite() {
 func CreateWebsite() {
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/login", LoginPage)
+	http.HandleFunc("/register", RegisterPage)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
 	http.ListenAndServe(website.Port, nil)
 }
@@ -32,10 +33,12 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func LoginPage(w http.ResponseWriter, r *http.Request) {
+	ParseTemplate(w, "web/login.html")
 	Login(r.FormValue("username"), r.FormValue("passwd"))
 }
 
 func RegisterPage(w http.ResponseWriter, r *http.Request) {
+	ParseTemplate(w, "web/register.html")
 	Register(r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
 }
 
