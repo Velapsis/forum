@@ -1,11 +1,11 @@
 package main
 
 import (
-	"forum/web"
+	fm "forum/logic"
 )
 
 func main() {
-	web.Init()
+	fm.Init()
 
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 	// 	fmt.Fprintf(w, "gdhs")

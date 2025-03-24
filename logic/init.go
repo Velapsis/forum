@@ -1,13 +1,8 @@
 package logic
 
-import (
-	"forum/web"
-	"forum/web/database"
-)
-
 func Init() {
-	database.Init()
-	web.Init()
+	// database.Init()
+	InitWebsite()
 
 	// Define regex
 	regex.Username = `[a-zA-Z0-9_]$`

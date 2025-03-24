@@ -1,28 +1,29 @@
 package logic
-import ("database/sql"
-		"time"
-		)
+
+import (
+	"database/sql"
+	"time"
+)
+
+var website Website
 
 var regex Regex
-var user User
- var Sql SQL
- var db *sql.DB
+var Sql SQL
+var db *sql.DB
+
+type Website struct {
+	Port     string
+	Database string
+
+	Home  string
+	Login string
+}
 
 type Regex struct {
 	Username string
 	Email    string
 }
 
-// DEBUG ONLY
-type User struct {
-	Username string
-	Email    string
-	Password string
-	UUID     int
-	// Provider   string
-	// ProviderID string
-	// CreatedAt  time.Time
-}
 // type GoogleUserInfo struct {
 // 	ID            string `json:"id"`
 // 	Email         string `json:"email"`
@@ -38,6 +39,7 @@ type User struct {
 // 	Email     string `json:"email"`
 // 	AvatarURL string `json:"avatar_url"`
 // }
+
 type Session struct {
 	ID        string
 	UserID    int

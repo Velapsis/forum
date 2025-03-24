@@ -4,7 +4,6 @@ import (
 	"database/sql" // Add this import for sql.ErrNoRows
 	"fmt"
 	"hash/fnv"
-	web "forum/web/database"
 	"math/rand/v2"
 	"regexp"
 )
@@ -15,12 +14,7 @@ func Login(username string, passwd string) {
 // Registers a new user with provided data
 func Register(username string, email string, passwd string) {
 	if IsLegit(username, email, passwd) {
-		// DEBUG ONLY
-		user.Username = username
-		user.Email = email
-		user.Password = passwd
-		user.UUID = GenerateUUID(username)
-		web.AddUser(Sql.InsertRequest, username, email, passwd)
+		// web.AddUser(Sql.InsertRequest, username, email, passwd)
 	}
 }
 
