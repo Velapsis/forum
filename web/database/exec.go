@@ -20,7 +20,7 @@ func Init() {
 	}
 
 	// Read SQL file
-	sql, err := os.Open("web/database/users.sql")
+	sql, err := os.Open("web/database/init-db.sql")
 	if err != nil {
 		fmt.Println("Error while reading SQL file: ", err)
 	}
@@ -42,4 +42,3 @@ func Init() {
 	defer database.Close()
 
 }
-

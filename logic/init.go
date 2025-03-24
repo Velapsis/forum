@@ -2,10 +2,11 @@ package logic
 
 import (
 	"forum/web"
+	"forum/web/database"
 )
 
 func Init() {
-	// database.Init()
+	database.Init()
 	web.Init()
 
 	// Define regex
