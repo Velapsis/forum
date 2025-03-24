@@ -10,19 +10,21 @@ import (
 var oauthStateStrings = make(map[string]time.Time)
 
 // Génération d'un état aléatoire pour OAuth
-func generateOAuthState() string {
-	state := generateUUID()
+func GenerateOAuthState() string {
+	state := GenerateSessionUUID()
 	oauthStateStrings[state] = time.Now().Add(10 * time.Minute) // Expire après 10 minutes
 	return state
 }
+
 // Génération d'un UUID
-func generateUUID() string {
+func GenerateSessionUUID() string {
 	uuid := make([]byte, 16)
 	rand.Read(uuid)
 	return hex.EncodeToString(uuid)
 }
+
 // Gestion des sessions
-func createSession(w http.ResponseWriter, userID int) (*Session, error) {
+func CreateSession(w http.ResponseWriter, userID int) (*Session, error) {
 	// Nettoyer les anciennes sessions
 	_, err := db.Exec("DELETE FROM sessions WHERE user_id = ?", userID)
 	if err != nil {
@@ -30,7 +32,7 @@ func createSession(w http.ResponseWriter, userID int) (*Session, error) {
 	}
 
 	// Créer une nouvelle session
-	sessionID := generateUUID()
+	sessionID := GenerateSessionUUID()
 	expiresAt := time.Now().Add(2 * time.Hour ) // 2 heures
 	createdAt := time.Now()
 
@@ -60,7 +62,7 @@ func createSession(w http.ResponseWriter, userID int) (*Session, error) {
 	return session, nil
 }
 
-func getSessionFromCookie(r *http.Request) *Session {
+func GetSessionFromCookie(r *http.Request) *Session {
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		return nil
@@ -75,7 +77,7 @@ func getSessionFromCookie(r *http.Request) *Session {
 	return &session
 }
 
-func deleteSession(w http.ResponseWriter, sessionID string) error {
+func DeleteSession(w http.ResponseWriter, sessionID string) error {
 	// Supprimer la session de la base de données
 	_, err := db.Exec("DELETE FROM sessions WHERE id = ?", sessionID)
 	if err != nil {
@@ -84,14 +86,14 @@ func deleteSession(w http.ResponseWriter, sessionID string) error {
    
   
 	// Supprimer le cookie
-	deleteCookie(w, "session_id")
+	DeleteCookie(w, "session_id")
    
   
 	return nil
    }
    
 
-func deleteCookie(w http.ResponseWriter, cookieName string) {
+func DeleteCookie(w http.ResponseWriter, cookieName string) {
 	cookie := &http.Cookie{
 	Name: cookieName,
 	Value: "",
@@ -103,7 +105,7 @@ func deleteCookie(w http.ResponseWriter, cookieName string) {
    }
 
 
-   func deleteExpiredSessions() error {
+   func DeleteExpiredSessions() error {
 	_, err := db.Exec("DELETE FROM sessions WHERE expires_at < ?", time.Now())
 	return err
    }
