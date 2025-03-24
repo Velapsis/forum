@@ -10,11 +10,16 @@ import (
 )
 
 var database *sql.DB
+var source string
 
-func Init() {
+func Exec(request string) {
+
+	// Defines the Data Source Name (DSN)
+	source = "@tcp(db:3306)/forum_db"
 
 	// Opens the database
-	database, err := sql.Open("mysql", "forum.db")
+	database, err := sql.Open("mysql", request+source)
+	fmt.Println("SQL Request: ", request+source)
 	if err != nil {
 		fmt.Println("Error while parsing database: ", err)
 	}
@@ -42,4 +47,3 @@ func Init() {
 	defer database.Close()
 
 }
-
