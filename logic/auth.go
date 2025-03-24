@@ -4,7 +4,7 @@ import (
 	"database/sql" // Add this import for sql.ErrNoRows
 	"fmt"
 	"hash/fnv"
-	web "main/web/database"
+	web "forum/web/database"
 	"math/rand/v2"
 	"regexp"
 )
