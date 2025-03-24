@@ -14,11 +14,6 @@ func Login(username string, passwd string) {
 // Registers a new user with provided data
 func Register(username string, email string, passwd string) {
 	if IsLegit(username, email, passwd) {
-		// DEBUG ONLY
-		user.Username = username
-		user.Email = email
-		user.Password = passwd
-		user.UUID = GenerateUUID(username)
 		// web.AddUser(Sql.InsertRequest, username, email, passwd)
 	}
 }

@@ -3,7 +3,6 @@ package logic
 import "database/sql"
 
 var website Website
-var user User
 
 var regex Regex
 var Sql SQL
@@ -15,13 +14,6 @@ type Website struct {
 
 	Home  string
 	Login string
-}
-
-type User struct {
-	Username string
-	Email    string
-	Password string
-	UUID     int
 }
 
 type Regex struct {

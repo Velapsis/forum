@@ -20,15 +20,23 @@ func InitWebsite() {
 }
 
 func CreateWebsite() {
-	http.HandleFunc("/login", Index)
+	http.HandleFunc("/", Index)
+	http.HandleFunc("/login", LoginPage)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
 	http.ListenAndServe(website.Port, nil)
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	ParseTemplate(w, "web/login.html")
-
+	ParseTemplate(w, "web/index.html")
 	println("Executing index on port: ", website.Port)
+}
+
+func LoginPage(w http.ResponseWriter, r *http.Request) {
+	Login(r.FormValue("username"), r.FormValue("passwd"))
+}
+
+func RegisterPage(w http.ResponseWriter, r *http.Request) {
+	Register(r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
 }
 
 func ParseTemplate(w http.ResponseWriter, tempPath string) {
