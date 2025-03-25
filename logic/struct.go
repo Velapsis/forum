@@ -6,6 +6,7 @@ import (
 )
 
 var website Website
+var webpage WebPage
 
 var regex Regex
 var Sql SQL
@@ -17,6 +18,10 @@ type Website struct {
 
 	Home  string
 	Login string
+}
+
+type WebPage struct {
+	IsConnected bool
 }
 
 type Regex struct {
