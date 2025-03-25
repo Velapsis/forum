@@ -3,6 +3,7 @@ package logic
 import "database/sql"
 
 var website Website
+var webpage WebPage
 
 var regex Regex
 var Sql SQL
@@ -14,7 +15,9 @@ type Website struct {
 
 	Home  string
 	Login string
+}
 
+type WebPage struct {
 	IsConnected bool
 }
 
