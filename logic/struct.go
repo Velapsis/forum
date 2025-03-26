@@ -9,7 +9,6 @@ var website Website
 var webpage WebPage
 
 var regex Regex
-var Sql SQL
 var db *sql.DB
 
 type Website struct {
@@ -50,8 +49,4 @@ type Session struct {
 	UserID    int
 	ExpiresAt time.Time
 	CreatedAt time.Time
-}
-
-type SQL struct {
-	InsertRequest string
 }
