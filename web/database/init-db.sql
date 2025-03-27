@@ -4,7 +4,7 @@
 USE forum_db;
 
 -- Table des utilisateurs
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(36) PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -15,7 +15,7 @@ CREATE TABLE users (
 );
 
 -- Table des catégories
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id VARCHAR(36) PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
     description TEXT,
@@ -25,7 +25,7 @@ CREATE TABLE categories (
 );
 
 -- Table des topics
-CREATE TABLE topics (
+CREATE TABLE IF NOT EXISTS topics (
     id VARCHAR(36) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE topics (
 );
 
 -- Table des posts (réponses dans les topics)
-CREATE TABLE posts (
+CREATE TABLE IF NOT EXISTS posts (
     id VARCHAR(36) PRIMARY KEY,
     content TEXT NOT NULL,
     topic_id VARCHAR(36) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE posts (
 );
 
 -- Table pour stocker les likes/dislikes des posts
-CREATE TABLE reactions (
+CREATE TABLE IF NOT EXISTS reactions (
     id VARCHAR(36) PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL,
     post_id VARCHAR(36) NOT NULL,
@@ -62,7 +62,7 @@ CREATE TABLE reactions (
 );
 
 -- Table pour les sessions utilisateur
-CREATE TABLE sessions (
+CREATE TABLE IF NOT EXISTS sessions (
     id VARCHAR(36) PRIMARY KEY,
     user_id VARCHAR(36) NOT NULL,
     expires_at TIMESTAMP NOT NULL,
@@ -72,18 +72,18 @@ CREATE TABLE sessions (
 
 -- Insertion d'un utilisateur admin par défaut (mot de passe: admin123)
 -- Note: En production, il faudrait utiliser un mot de passe plus sécurisé et le hasher correctement
-INSERT INTO users (id, username, email, password, role)
-VALUES (
-    UUID(),
-    'admin',
-    'admin@forum.com',
-    '$2a$10$XgU2GZP8.7WEQ9y5WEr4XeRjxqp.p16QA08ELnJw3EBqLwUHeXOPi', -- admin123 hashé avec bcrypt
-    'admin'
-);
+-- INSERT INTO users (id, username, email, password, role)
+-- VALUES (
+--     UUID(),
+--     'admin',
+--     'admin@forum.com',
+--     '$2a$10$XgU2GZP8.7WEQ9y5WEr4XeRjxqp.p16QA08ELnJw3EBqLwUHeXOPi', -- admin123 hashé avec bcrypt
+--     'admin'
+-- );
 
 -- Insertion de quelques catégories par défaut
-INSERT INTO categories (id, name, description, created_by)
-VALUES 
-    (UUID(), 'Général', 'Discussions générales sur divers sujets', (SELECT id FROM users WHERE username = 'admin')),
-    (UUID(), 'Technologie', 'Discussions sur les technologies, la programmation, et l\'informatique', (SELECT id FROM users WHERE username = 'admin')),
-    (UUID(), 'Loisirs', 'Discussions sur les hobbies, les sports, et les activités de loisir', (SELECT id FROM users WHERE username = 'admin'));
+-- INSERT INTO categories (id, name, description, created_by)
+-- VALUES 
+--     (UUID(), 'Général', 'Discussions générales sur divers sujets', (SELECT id FROM users WHERE username = 'admin')),
+--     (UUID(), 'Technologie', 'Discussions sur les technologies, la programmation, et l\'informatique', (SELECT id FROM users WHERE username = 'admin')),
+--     (UUID(), 'Loisirs', 'Discussions sur les hobbies, les sports, et les activités de loisir', (SELECT id FROM users WHERE username = 'admin'));

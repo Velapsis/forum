@@ -8,12 +8,12 @@ import (
 func main() {
 
 	println("GO: Running main.go..")
+	database.Connect()
 
-	frm.Init()
-	database.Init()
+	// frm.Init()
 
-	database.PingTest()
-	database.AddUser("tony", "tonytonic@gmail.com", "mdp1234")
+	// database.PingTest()
+	// database.AddUser("tony", "tonytonic@gmail.com", "mdp1234")
 
 	frm.CreateWebsite()
 

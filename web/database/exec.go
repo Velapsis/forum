@@ -9,44 +9,6 @@ import (
 )
 
 var database *sql.DB
-var source string
-
-func Init() {
-
-	DefineRequests()
-	var err error
-	// user:passwd@tcp(addr:port)/db_name
-	source := "forum_user:forum_password@tcp(localhost:3306)/forum_db"
-
-	// Connects to the database
-	database, err = sql.Open("mysql", source)
-	if err != nil {
-		println("Error while connecting to the database: ", err)
-	}
-
-	// Read SQL file
-	sql, err := os.Open("web/database/init-db.sql")
-	if err != nil {
-		println("Error while reading SQL file: ", err)
-	}
-
-	// Convert SQL instructions to bytes
-	sqlBytes, err := io.ReadAll(sql)
-	if err != nil {
-		println("Error while converting SQL file to bytes: ", err)
-	}
-
-	// Execute the database
-	output, err := database.Exec(string(sqlBytes))
-	println("DB: Exec database output: ", output)
-	if err != nil {
-		println("Error while executing database: ", err)
-	}
-
-	// Closes database when main() stops running
-	defer database.Close()
-
-}
 
 func Exec(query string, username string, email string, password string) {
 	output, err := database.Exec(query, username, email, password)
@@ -59,9 +21,52 @@ func Exec(query string, username string, email string, password string) {
 	println("DB: Exec database output: ", output)
 }
 
-func PingTest() {
-	err := database.Ping()
+func Connect() {
+
+	var err error
+
+	source := "root:rootpassword@tcp(db:3306)/forum_db?multiStatements=true"
+
+	// Connects to the database
+	println("Open database using dsn: ", source)
+	database, err = sql.Open("mysql", source)
 	if err != nil {
-		println("Error while pinging database: ", err)
+		println("Error while connecting to the database: ", err)
 	}
+
+	println("Connecting to database..")
+	if err = database.Ping(); err != nil {
+		println("Error while pinging the database: ", err)
+	}
+	println("Successfully connected to the database!")
+
+	// Read SQL file
+	println("Reading SQL file..")
+	sql, err := os.Open("web/database/init-db.sql")
+	if err != nil {
+		println("Error while reading SQL file: ", err)
+	}
+
+	println("SQL file: ", sql)
+
+	// Convert SQL instructions to bytes
+	println("Converting SQL file to bytes..")
+	sqlBytes, err := io.ReadAll(sql)
+	if err != nil {
+		println("Error while converting SQL file to bytes: ", err)
+	}
+
+	println("Compiled SQL file: ", sqlBytes)
+	println("Decompiled SQL file: ", string(sqlBytes))
+
+	// Execute the database
+	println("Attempting to execute database..")
+	output, err := database.Exec(string(sqlBytes))
+	println("DB: Exec database output: ", output)
+	if err != nil {
+		println("Error while executing database: ", err)
+	}
+
+	defer database.Close()
+
 }
