@@ -1,11 +1,19 @@
 package main
 
 import (
-	fm "forum/logic"
+	frm "forum/logic"
 )
 
 func main() {
-	fm.Init()
+
+	println("GO: Running main.go..")
+
+	frm.Init()
+
+	// database.PingTest()
+	// database.AddUser("tony", "tonytonic@gmail.com", "mdp1234")
+
+	frm.InitWebsite()
 
 	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 	// 	fmt.Fprintf(w, "gdhs")

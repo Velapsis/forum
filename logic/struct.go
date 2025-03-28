@@ -6,9 +6,9 @@ import (
 )
 
 var website Website
+var webpage WebPage
 
 var regex Regex
-var Sql SQL
 var db *sql.DB
 
 type Website struct {
@@ -17,6 +17,10 @@ type Website struct {
 
 	Home  string
 	Login string
+}
+
+type WebPage struct {
+	IsConnected bool
 }
 
 type Regex struct {
@@ -45,8 +49,4 @@ type Session struct {
 	UserID    int
 	ExpiresAt time.Time
 	CreatedAt time.Time
-}
-
-type SQL struct {
-	InsertRequest string
 }

@@ -28,8 +28,12 @@
     </div>
 
     <div style="display: flex; justify-content: flex-end;">
-        <form action="/" method="post">
+        <form action="/login" method="post">
+            {{if .IsConnected}}
             <button class="navbar-tab" type="submit"> PROFILE </button>
+            {{else}}
+            <button class="navbar-tab" type="submit" href="/login"> SIGN IN </button>
+            {{end}}
         </form>
     </div>
 </div>
@@ -41,6 +45,52 @@
 
     <div class="container">
         <p class="title"> Featured </p>
+        <div class="grid-display">
+            <!-- FORUM ELEMENT -->
+            <div class="forum-elem">
+                <div class="forum-embed">
+                <br>
+                <a class="forum-link"> SPORTS </a>
+                <br>
+                <a class="forum-link"> Football </a>
+                <p class="forum-text" style="font-weight: 500; font-size: 22px"> Title of the post </p>
+                </div>
+                <div class="forum-content">
+                <p> Blablablablaaa </p>
+                <img>
+                </div>
+                <button class="forum-btn" type="submit"> VIEW POST </button>
+            </div>
+            <!-- FORUM ELEMENT -->
+            <div class="forum-elem">
+                <div class="forum-embed">
+                <br>
+                <a class="forum-link"> VIDEO GAMES </a>
+                <br>
+                <a class="forum-link"> Minecraft </a>
+                <p class="forum-text" style="font-weight: 500; font-size: 22px"> Title of the post </p>
+                </div>
+                <div class="forum-content">
+                <p> Blablablablaaa</p>
+                <img>
+                </div>
+                <button class="forum-btn" type="submit"> VIEW POST </button>
+            </div>
+        <!-- FORUM ELEMENT -->
+        <div class="forum-elem">
+            <div class="forum-embed">
+            <br>
+            <a class="forum-link"> CATEGORY </a>
+            <br>
+            <a class="forum-link"> Topic </a>
+            <p class="forum-text" style="font-weight: 500; font-size: 22px"> Title of the post </p>
+            </div>
+            <div class="forum-content">
+            <p> Blablablablaaa </p>
+            <img>
+            </div>
+            <button class="forum-btn" type="submit"> VIEW POST </button>
+        </div>
     </div>
 
 </div>
