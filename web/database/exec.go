@@ -36,9 +36,10 @@ func Connect() {
 
 	println("Connecting to database..")
 	if err = database.Ping(); err != nil {
-		println("Error while pinging the database: ", err)
+		println("Error while pinging the database: ", err.Error())
+	} else {
+		println("Successfully connected to the database!")
 	}
-	println("Successfully connected to the database!")
 
 	// Read SQL file
 	println("Reading SQL file..")
