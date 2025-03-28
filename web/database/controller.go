@@ -27,3 +27,28 @@ func AddUser(username string, email string, password string, id int) {
 
 	database.Exec(query.InsertUser, username, email, password, id)
 }
+
+func IsUserAvailable(username string, email string) bool {
+	rows, err := database.Query("SELECT username, email FROM users")
+	if err != nil {
+		println("DB: Error querying users table:", err.Error())
+		return false
+	}
+
+	for rows.Next() {
+		var dbUsername, dbEmail string
+		if err := rows.Scan(&dbUsername, &dbEmail); err != nil {
+			println("DB: Error scanning users: ", err.Error())
+			return false
+		}
+		if dbUsername == username {
+			println("Username ", dbUsername, " is already taken")
+			return false
+		} else if dbEmail == email {
+			println("Email ", dbEmail, " is already taken")
+		}
+	}
+
+	println("PASS: Availaibility check")
+	return true
+}

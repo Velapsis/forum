@@ -2,21 +2,21 @@ package logic
 
 import (
 	// "database/sql" // Add this import for sql.ErrNoRows
+
 	"fmt"
-	"forum/web/database"
+	database "forum/web/database"
 	"hash/fnv"
 	"math/rand/v2"
 	"regexp"
 )
 
-func Login(username string, passwd string) {
-}
+func Login(username string, passwd string) {}
 
 // Registers a new user with provided data
 func Register(username string, email string, passwd string) {
 	println("Attempting to register to the database")
 	println("Creds: ", username, email, passwd)
-	if IsLegit(username, email, passwd) {
+	if IsLegit(username, email, passwd) && database.IsUserAvailable(username, email) {
 		println("User is legit, attempting to add to database..")
 		database.AddUser(username, email, passwd, GenerateUUID(username))
 	}
@@ -32,7 +32,6 @@ func IsLegit(username string, email string, passwd string) bool {
 		fmt.Println("Email is null")
 		return false
 	}
-
 	println("PASS: Null check")
 
 	// Regex check
@@ -45,7 +44,6 @@ func IsLegit(username string, email string, passwd string) bool {
 		fmt.Println("Email is not valid")
 		return false
 	}
-
 	println("PASS: Regex check")
 
 	// Password check
@@ -63,30 +61,7 @@ func IsLegit(username string, email string, passwd string) bool {
 		fmt.Println("Password is not valid: No number")
 		return false
 	}
-
 	println("PASS: Password check")
-
-	// Database check for username
-	// var existingUsername string
-	// err := db.QueryRow("SELECT username FROM user WHERE username = ?", username).Scan(&existingUsername)
-	// if err == nil {
-	// 	fmt.Println("Username already exists")
-	// 	return false
-	// } else if err != sql.ErrNoRows {
-	// 	fmt.Println("Database error:", err)
-	// 	return false
-	// }
-
-	// // Database check for email
-	// var existingEmail string
-	// err = db.QueryRow("SELECT email FROM user WHERE email = ?", email).Scan(&existingEmail)
-	// if err == nil {
-	// 	fmt.Println("Email already exists")
-	// 	return false
-	// } else if err != sql.ErrNoRows {
-	// 	fmt.Println("Database error:", err)
-	// 	return false
-	// }
 
 	return true
 }
