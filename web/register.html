@@ -17,12 +17,15 @@
 
     <div class="div-login" style="display: flex; flex-direction:column; width:20%">
         <p class="title"> SIGN UP </p>
+
+        <form action="/register" method="post">
+
         <input type="text" name="username" class="text-input" placeholder="Username">
         <input type="text" name="email" class="text-input" placeholder="Email">
         <input type="password" name="passwd" class="text-input" placeholder="Password">
+        
+        <button type="submit" class="btn-login"> Register </button>
 
-        <form action="/register" method="post">
-            <button type="submit" class="btn-login"> Register </button>
         </form>
             <p class="text">Already have an account? <a class="text-link" href="/login">Sign In</a></p>
         

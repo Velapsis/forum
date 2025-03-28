@@ -10,13 +10,13 @@ import (
 
 var database *sql.DB
 
-func Exec(query string, username string, email string, password string) {
-	output, err := database.Exec(query, username, email, password)
+func Exec(query string, args ...interface{}) {
+	output, err := database.Exec(query, args...)
 	if err != nil {
 		println("DB: Error while executing database: ")
-		println("  User: ", username, email, password)
+		println("  Parameters: ", args)
 		println("  Query: ", query)
-		println("  Error: ", err)
+		println("  Error: ", err.Error())
 	}
 	println("DB: Exec database output: ", output)
 }
@@ -47,8 +47,6 @@ func Connect() {
 		println("Error while reading SQL file: ", err)
 	}
 
-	println("SQL file: ", sql)
-
 	// Convert SQL instructions to bytes
 	println("Converting SQL file to bytes..")
 	sqlBytes, err := io.ReadAll(sql)
@@ -56,17 +54,11 @@ func Connect() {
 		println("Error while converting SQL file to bytes: ", err)
 	}
 
-	println("Compiled SQL file: ", sqlBytes)
-	println("Decompiled SQL file: ", string(sqlBytes))
-
 	// Execute the database
-	println("Attempting to execute database..")
 	output, err := database.Exec(string(sqlBytes))
-	println("DB: Exec database output: ", output)
+	println("Exec database output: ", output)
 	if err != nil {
 		println("Error while executing database: ", err)
 	}
-
-	defer database.Close()
 
 }

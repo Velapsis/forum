@@ -41,6 +41,7 @@ func LoginPage(w http.ResponseWriter, r *http.Request) {
 
 func RegisterPage(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/register.html")
+	println("From HTML: ", r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
 	Register(r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
 }
 
