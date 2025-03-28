@@ -7,6 +7,7 @@ import (
 
 var website Website
 var webpage WebPage
+var user User
 
 var regex Regex
 var db *sql.DB
@@ -17,6 +18,12 @@ type Website struct {
 
 	Home  string
 	Login string
+}
+
+type User struct {
+	Username string
+	Email    string
+	Password string
 }
 
 type WebPage struct {

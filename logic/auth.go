@@ -10,7 +10,11 @@ import (
 	"regexp"
 )
 
-func Login(username string, passwd string) {}
+func Login(username string, passwd string) {
+	if database.IsUserCorrect(username, passwd) {
+		// TODO: LOGIQUE LOGIN
+	}
+}
 
 // Registers a new user with provided data
 func Register(username string, email string, passwd string) {
