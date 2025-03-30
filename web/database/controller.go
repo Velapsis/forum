@@ -8,12 +8,14 @@ import (
 
 type Query struct {
 	InsertUser string
+	GetUserID  string
 }
 
 var query Query
 
 func DefineRequests() {
 	query.InsertUser = `INSERT INTO users (username, email, password, id) VALUES (?, ?, ?, ?)`
+	query.GetUserID = `SELECT id FROM users WHERE username = ?`
 	// Sql.UpdateUsernameRequest = `UPDATE user SET username = ? WHERE id = ?`
 	// Sql.UpdateEmailRequest = `UPDATE user SET email = ? WHERE id = ?`
 	// Sql.UpdatePasswordRequest = `UPDATE user SET password = ? WHERE id = ?`
@@ -51,4 +53,37 @@ func IsUserAvailable(username string, email string) bool {
 
 	println("PASS: Availaibility check")
 	return true
+}
+
+func IsUserCorrect(username string, password string) bool {
+	rows, err := database.Query("SELECT username, password FROM users")
+	if err != nil {
+		println("DB: Error querying users table:", err.Error())
+		return false
+	}
+
+	var isCorrect bool
+	for rows.Next() {
+		var dbUsername, dbPassword string
+		if err := rows.Scan(&dbUsername); err != nil {
+			println("DB: Error scanning users: ", err.Error())
+			return false
+		}
+		if dbUsername == username && dbPassword == password {
+			isCorrect = true
+		} else {
+			isCorrect = false
+		}
+
+	}
+	return isCorrect
+}
+
+func GetUserID(username string) int {
+	var id int
+	err := database.QueryRow(query.GetUserID, username).Scan(&id)
+	if err != nil {
+		println("DB: Error while scanning users: ", err.Error())
+	}
+	return id
 }

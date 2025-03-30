@@ -31,7 +31,7 @@ func Connect() {
 	println("Open database using dsn: ", source)
 	database, err = sql.Open("mysql", source)
 	if err != nil {
-		println("Error while connecting to the database: ", err)
+		println("Error while connecting to the database: ", err.Error())
 	}
 
 	println("Connecting to database..")
@@ -59,7 +59,7 @@ func Connect() {
 	output, err := database.Exec(string(sqlBytes))
 	println("Exec database output: ", output)
 	if err != nil {
-		println("Error while executing database: ", err)
+		println("Error while executing database: ", err.Error())
 	}
 
 }
