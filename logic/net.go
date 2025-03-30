@@ -29,7 +29,6 @@ func CreateWebsite() {
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/index.html")
-	println("Executing index on port: ", website.Port)
 	webpage = WebPage{
 		IsConnected: true,
 	}
@@ -42,12 +41,13 @@ func LoginPage(w http.ResponseWriter, r *http.Request) {
 
 func RegisterPage(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/register.html")
+	println("From HTML: ", r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
 	Register(r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
 }
 
 func ParseTemplate(w http.ResponseWriter, tempPath string) {
 	tmpl, err := template.ParseFiles(tempPath)
-	println("Parsing template: ", tempPath)
+	println("HTTP: Parsing template: ", tempPath)
 
 	// Error management
 	if tmpl == nil {
