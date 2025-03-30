@@ -12,7 +12,9 @@ import (
 
 func Login(username string, passwd string) {
 	if database.IsUserCorrect(username, passwd) {
-		// TODO: LOGIQUE LOGIN
+		webpage.UserID = database.GetUserID(username)
+	} else {
+		println("Username or password incorrect")
 	}
 }
 
@@ -23,6 +25,7 @@ func Register(username string, email string, passwd string) {
 	if IsLegit(username, email, passwd) && database.IsUserAvailable(username, email) {
 		println("User is legit, attempting to add to database..")
 		database.AddUser(username, email, passwd, GenerateUUID(username))
+		Login(username, passwd)
 	}
 }
 

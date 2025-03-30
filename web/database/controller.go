@@ -78,3 +78,12 @@ func IsUserCorrect(username string, password string) bool {
 	}
 	return isCorrect
 }
+
+func GetUserID(username string) int {
+	var id int
+	err := database.QueryRow(query.GetUserID, username).Scan(&id)
+	if err != nil {
+		println("DB: Error while scanning users: ", err.Error())
+	}
+	return id
+}

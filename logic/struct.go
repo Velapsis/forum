@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -10,7 +9,6 @@ var webpage WebPage
 var user User
 
 var regex Regex
-var db *sql.DB
 
 type Website struct {
 	Port     string
@@ -28,6 +26,7 @@ type User struct {
 
 type WebPage struct {
 	IsConnected bool
+	UserID      int
 }
 
 type Regex struct {
