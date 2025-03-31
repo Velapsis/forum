@@ -1,4 +1,4 @@
-package web
+package logic
 
 import (
 	"fmt"
@@ -6,33 +6,47 @@ import (
 	"net/http"
 )
 
-func Init() {
+func InitWebsite() {
 
 	// Define website data
-	web.Database = "web/database/forum.db"
-	web.Port = ":8080"
+	website.Database = "web/database/forum.db"
+	website.Port = ":8080"
 
 	// Define website routes
-	web.Home = ""
-	web.Login = ""
+	website.Home = ""
+	website.Login = ""
 
 	CreateWebsite()
 }
 
 func CreateWebsite() {
 	http.HandleFunc("/", Index)
+	http.HandleFunc("/login", LoginPage)
+	http.HandleFunc("/register", RegisterPage)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
-	http.ListenAndServe(web.Port, nil)
+	http.ListenAndServe(website.Port, nil)
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
+	ParseTemplate(w, "web/index.html")
+	webpage = WebPage{
+		IsConnected: true,
+	}
+}
+
+func LoginPage(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/login.html")
-	println("Executing index on port: ", web.Port)
+	Login(r.FormValue("username"), r.FormValue("passwd"))
+}
+
+func RegisterPage(w http.ResponseWriter, r *http.Request) {
+	ParseTemplate(w, "web/register.html")
+	Register(r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
 }
 
 func ParseTemplate(w http.ResponseWriter, tempPath string) {
 	tmpl, err := template.ParseFiles(tempPath)
-	println("Parsing template: ", tempPath)
+	println("HTTP: Parsing template: ", tempPath)
 
 	// Error management
 	if tmpl == nil {
@@ -43,7 +57,7 @@ func ParseTemplate(w http.ResponseWriter, tempPath string) {
 		return
 	}
 
-	err = tmpl.Execute(w, "")
+	err = tmpl.Execute(w, webpage)
 	if err != nil {
 		fmt.Println("Error executing template:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

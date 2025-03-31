@@ -1,0 +1,25 @@
+package main
+
+import (
+	frm "forum/logic"
+)
+
+func main() {
+
+	println("GO: Running main.go..")
+
+	frm.Init()
+
+	// database.PingTest()
+	// database.AddUser("tony", "tonytonic@gmail.com", "mdp1234")
+
+	frm.InitWebsite()
+
+	// http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	// 	fmt.Fprintf(w, "gdhs")
+	// 	log.Print("bjr")
+	// })
+
+	// fmt.Println("Serveur démarré sur le port 8080")
+	// http.ListenAndServe(":8080", nil)
+}

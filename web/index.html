@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
     <link href='https://fonts.googleapis.com/css?family=Tiny5' rel='stylesheet'>
     <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>
     <title> Forum </title>
@@ -13,99 +14,86 @@
 <body>
 
 <div class="navbar">
+    <div style="display: flex; gap: 5px">
     <form action="/" method="post">
-    <button class="navbar-tab" type="submit"> Home </button>
+    <button class="navbar-tab" type="submit"> HOME </button>
     </form>
     <form action="/" method="post">
-    <button class="navbar-tab" type="submit"> Browse </button>
+    <button class="navbar-tab" type="submit"> EXPLORE </button>
     </form>
     <form action="/" method="post">
-    <button class="navbar-tab" type="submit"> Inbox </button>
+    <button class="navbar-tab" type="submit"> MESSAGES </button>
     </form>
-    <form action="/" method="post">
-    <button class="navbar-tab" type="submit"> Profile </button>
-    </form>
-
     <input type="text" class="text-query" placeholder="Search for..">
+    </div>
+
+    <div style="display: flex; justify-content: flex-end;">
+        <form action="/login" method="post">
+            {{if .IsConnected}}
+            <button class="navbar-tab" type="submit"> PROFILE </button>
+            {{else}}
+            <button class="navbar-tab" type="submit" href="/login"> SIGN IN </button>
+            {{end}}
+        </form>
+    </div>
 </div>
 
-<style>
+<br>
+<br>
 
-    :root {
-        --dark: #2F3361;
-        --bg-dark: #242854;
-        --light: #FCD580;
-    }
-    
-    body {
-        background-color: var(--dark);
-        font-family: 'Tiny5';
-    }
+<div class="forum-container">
 
-    .navbar {
-        display: flex;
-        gap: 5px;
-        height: 40px;
-        background-color: var(--bg-dark);
-    }
+    <div class="container">
+        <p class="title"> Featured </p>
+        <div class="grid-display">
+            <!-- FORUM ELEMENT -->
+            <div class="forum-elem">
+                <div class="forum-embed">
+                <br>
+                <a class="forum-link"> SPORTS </a>
+                <br>
+                <a class="forum-link"> Football </a>
+                <p class="forum-text" style="font-weight: 500; font-size: 22px"> Title of the post </p>
+                </div>
+                <div class="forum-content">
+                <p> Blablablablaaa </p>
+                <img>
+                </div>
+                <button class="forum-btn" type="submit"> VIEW POST </button>
+            </div>
+            <!-- FORUM ELEMENT -->
+            <div class="forum-elem">
+                <div class="forum-embed">
+                <br>
+                <a class="forum-link"> VIDEO GAMES </a>
+                <br>
+                <a class="forum-link"> Minecraft </a>
+                <p class="forum-text" style="font-weight: 500; font-size: 22px"> Title of the post </p>
+                </div>
+                <div class="forum-content">
+                <p> Blablablablaaa</p>
+                <img>
+                </div>
+                <button class="forum-btn" type="submit"> VIEW POST </button>
+            </div>
+        <!-- FORUM ELEMENT -->
+        <div class="forum-elem">
+            <div class="forum-embed">
+            <br>
+            <a class="forum-link"> CATEGORY </a>
+            <br>
+            <a class="forum-link"> Topic </a>
+            <p class="forum-text" style="font-weight: 500; font-size: 22px"> Title of the post </p>
+            </div>
+            <div class="forum-content">
+            <p> Blablablablaaa </p>
+            <img>
+            </div>
+            <button class="forum-btn" type="submit"> VIEW POST </button>
+        </div>
+    </div>
 
-    .text-query {
-        padding: 10px 20px;
-        height: 20px;
-        background-color: var(--dark);
-        border: 2px solid var(--light);
-        border-radius: 5px;
-        color: aliceblue;
-        font-size: 20px;
-        font-weight: 400;
-        font-family: 'Lato';
-        text-align: left;
-    }
-
-    .text-query:hover {
-        border-color: aliceblue;
-    }
-    
-    .title {
-        font-size: 24px;
-        color: aliceblue;
-        font-weight: bold;
-    }
-    
-    .navbar-tab {
-        padding:10px 20px;
-        border-radius: 5px;
-        background-color: var(--light);
-        color: var(--bg-dark);
-        transition: 0.3s;
-        font-size: 18px;
-        font-family: 'Tiny5';
-        font-weight: 500;
-    }
-    
-    .navbar-tab:hover {
-        cursor: pointer;
-        border-color: aliceblue;
-        transform: scale(1.05);
-        font-weight: bold;
-    }
-    
-    .text {
-        font-size: 14px;
-        color: aliceblue;
-    }
-    
-    .text-link {
-        color: var(--light);
-    }
-    
-    .text-link:hover {
-        text-decoration: underline;
-        cursor: pointer;
-    }
-        
-    </style>
-    
+</div>
 
 </body>
 
