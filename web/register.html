@@ -24,11 +24,16 @@
 
         <form action="/register" method="post">
 
-        <input type="text" name="username" class="text-input" placeholder="Username">
-        <input type="text" name="email" class="text-input" placeholder="Email">
-        <input type="password" name="passwd" class="text-input" placeholder="Password">
+        <input type="text" name="username" class="text-input" placeholder="Username" id="username">
+        <p id="usernameHint" class="text-hint"> </p>
+        <input type="text" name="email" class="text-input" placeholder="Email" id="email">
+        <p id="emailHint" class="text-hint"> </p>
+        <input type="password" name="passwd" class="text-input" placeholder="Password" id="password">
+        <p id="passwordHint" class="text-hint"> </p>
         
         <button type="submit" class="btn-login"> Register </button>
+
+        <script src="/static/script.js"></script>
 
         </form>
             <p class="text">Already have an account? <a class="text-link" href="/login">Sign In</a></p>

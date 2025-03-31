@@ -75,6 +75,7 @@ func IsUserCorrect(username string, password string) bool {
 		}
 		if dbUsername == username && dbPassword == password {
 			isCorrect = true
+			break
 		} else {
 			isCorrect = false
 		}
