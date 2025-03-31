@@ -17,11 +17,10 @@
 
     <div class="div-login" style="display: flex; flex-direction:column; width:20%">
         <p class="title"> SIGN IN </p>
+        <form action="/login" method="post">
         <input type="text" name="username" class="text-input" placeholder="Username">
         <input type="password" name="passwd" class="text-input" placeholder="Password">
-
-        <form action="/login" method="post">
-            <button type="submit" class="btn-login"> Login </button>
+        <button type="submit" class="btn-login"> Login </button>
         </form>
         <p class="text">Don't have an account? <a class="text-link" href="/register">Sign Up</a></p>
         
