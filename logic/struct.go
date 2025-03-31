@@ -26,6 +26,7 @@ type User struct {
 
 type WebPage struct {
 	IsConnected bool
+	Username    string
 	UserID      int
 }
 

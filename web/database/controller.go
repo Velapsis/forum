@@ -78,6 +78,7 @@ func IsUserCorrect(username string, password string) bool {
 		} else {
 			isCorrect = false
 		}
+
 	}
 	return isCorrect
 }

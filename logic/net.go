@@ -2,6 +2,7 @@ package logic
 
 import (
 	"fmt"
+	"forum/web/database"
 	"html/template"
 	"net/http"
 )
@@ -31,6 +32,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/index.html")
 	webpage = WebPage{
 		IsConnected: true,
+		Username:    database.GetUsername(webpage.UserID),
 	}
 }
 
