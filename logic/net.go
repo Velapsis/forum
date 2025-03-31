@@ -24,6 +24,7 @@ func CreateWebsite() {
 	http.HandleFunc("/", Index)
 	http.HandleFunc("/login", LoginPage)
 	http.HandleFunc("/register", RegisterPage)
+	http.HandleFunc("/logout", LogoutHandler)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
 	http.ListenAndServe(website.Port, nil)
 }
@@ -48,6 +49,25 @@ func RegisterPage(w http.ResponseWriter, r *http.Request) {
 	println("From HTML: ", r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
 	Register(r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
 }
+
+
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+    err := Logout(w, r)
+    if err != nil {
+        fmt.Println("Erreur lors de la déconnexion:", err)
+    }
+    
+    // Important: réinitialiser explicitement les données de l'utilisateur
+    webpage = WebPage{
+        IsConnected: false,
+        UserID:      0,
+        Username:    "",
+    }
+    
+    // Rediriger vers la page d'accueil après la déconnexion
+    http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
 
 func ParseTemplate(w http.ResponseWriter, tempPath string) {
 	tmpl, err := template.ParseFiles(tempPath)

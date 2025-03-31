@@ -80,6 +80,33 @@ func GetSessionFromCookie(r *http.Request) *Session {
 	return &session
 }
 
+func Logout(w http.ResponseWriter, r *http.Request) error {
+    
+    // Récupérer le cookie de session
+    cookie, err := r.Cookie("session_id")
+    if err != nil {
+        // Si pas de cookie, pas besoin de déconnexion
+        return nil
+    }
+
+    // Supprimer la session de la base de données
+    _, err = db.Exec("DELETE FROM sessions WHERE id = ?", cookie.Value)
+    if err != nil {
+        return err
+    }
+    
+    // Supprimer le cookie
+    DeleteCookie(w, "session_id")
+    
+    // Réinitialiser l'état de l'utilisateur
+    webpage.IsConnected = false
+    webpage.UserID = 0
+    webpage.Username = ""
+    
+    return nil
+}
+
+
 func DeleteSession(w http.ResponseWriter, sessionID string) error {
 	// Supprimer la session de la base de données
 	_, err := db.Exec("DELETE FROM sessions WHERE id = ?", sessionID)

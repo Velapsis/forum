@@ -94,6 +94,10 @@ func GetUserID(username string) int {
 }
 
 func GetUsername(id int) string {
+	if id == 0 {
+		return ""
+	}
+	
 	var username string
 	err := database.QueryRow(query.GetUsername, id).Scan(&username)
 	if err != nil {

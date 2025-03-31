@@ -26,13 +26,21 @@
     </div>
 
     <div style="display: flex; justify-content: flex-end;">
-        <form action="/login" method="post">
-            {{if .IsConnected}}
+        {{if .IsConnected}}
+        <form action="/profile" method="get">
             <button class="navbar-tab" type="submit"> {{.Username}} </button>
+        </form>
+        <form action="/logout" method="post">
+            <button class="navbar-tab" type="submit"> LOGOUT </button>
+        </form>
             {{else}}
-            <button class="navbar-tab" type="submit" href="/login"> SIGN IN </button>
+            <form action="/login" method="get">
+                <button class="navbar-tab" type="submit"> SIGN IN </button>
+            </form>
             {{end}}
         </form>
+
+        
     </div>
 </div>
 
