@@ -13,13 +13,19 @@
 
 <body>
 
+    <form action="/" method="post">
+        <button class="navbar-tab" type="submit"> HOME </button>
+    </form>
+
     <div style="display: flex; justify-content: center; margin-top: 5%;">
+
 
     <div class="div-login" style="display: flex; flex-direction:column; width:20%">
         <p class="title"> SIGN IN </p>
         <input type="text" name="username" class="text-input" placeholder="Username">
         <input type="password" name="passwd" class="text-input" placeholder="Password">
 
+     
         <form action="/login" method="post">
             <button type="submit" class="btn-login"> Login </button>
         </form>
