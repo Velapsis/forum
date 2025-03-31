@@ -13,7 +13,9 @@ import (
 func Login(username string, passwd string) {
 	if database.IsUserCorrect(username, passwd) {
 		webpage.UserID = database.GetUserID(username)
+		println("User ID: ", database.GetUserID(username))
 	} else {
+		println("Username: ", username, " Passwd: ", passwd)
 		println("Username or password incorrect")
 	}
 }

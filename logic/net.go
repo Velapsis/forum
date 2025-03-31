@@ -36,7 +36,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func LoginPage(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/login.html")
+	println("Username: ", r.FormValue("username"), " Password: ", r.FormValue("passwd"))
 	Login(r.FormValue("username"), r.FormValue("passwd"))
+
 }
 
 func RegisterPage(w http.ResponseWriter, r *http.Request) {
