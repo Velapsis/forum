@@ -57,6 +57,7 @@ func ProfilePage(w http.ResponseWriter, r *http.Request) {
 
 func PostPage(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/post.html")
+	CreatePost(webpage.UserID, r.FormValue("topic"), r.FormValue("title"), r.FormValue("postcontent"))
 }
 
 func ParseTemplate(w http.ResponseWriter, tempPath string) {

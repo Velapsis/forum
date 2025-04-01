@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS topics (
 -- Table des posts (réponses dans les topics)
 CREATE TABLE IF NOT EXISTS posts (
     id VARCHAR(36) PRIMARY KEY,
+    title TEXT NOT NULL,
     content TEXT NOT NULL,
     topic_id VARCHAR(36) NOT NULL,
     created_by VARCHAR(36) NOT NULL,
