@@ -26,8 +26,10 @@
     </div>
 
     <div style="display: flex; justify-content: flex-end;">
-        
             {{if .IsConnected}}
+            <form action="/post" method="post">
+            <button class="navbar-tab" type="submit" href="/post"> NEW POST </button>
+            </form>
             <button class="navbar-tab" type="submit"> {{.Username}} </button>
             {{else}}
             <form action="/login" method="post">
