@@ -8,7 +8,7 @@ import (
 )
 
 func InitWebsite() {
-
+	InitSessionDB()
 	// Define website data
 	website.Database = "web/database/forum.db"
 	website.Port = ":8080"
@@ -30,24 +30,76 @@ func CreateWebsite() {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	ParseTemplate(w, "web/index.html")
-	webpage = WebPage{
-		IsConnected: true,
-		Username:    database.GetUsername(webpage.UserID),
-	}
+	session := GetSessionFromCookie(r)
+    
+    if session != nil {
+        webpage = WebPage{
+            IsConnected: true,
+            UserID:      session.UserID,
+            Username:    database.GetUsername(session.UserID),
+        }
+    } else {
+        webpage = WebPage{
+            IsConnected: false,
+            UserID:      0,
+            Username:    "",
+        }
+    }
+    
+    ParseTemplate(w, "web/index.html")
 }
 
 func LoginPage(w http.ResponseWriter, r *http.Request) {
-	ParseTemplate(w, "web/login.html")
-	println("Username: ", r.FormValue("username"), " Password: ", r.FormValue("passwd"))
-	Login(r.FormValue("username"), r.FormValue("passwd"))
-
+	if r.Method == "POST" {
+        username := r.FormValue("username")
+        passwd := r.FormValue("passwd")
+        
+        println("Username: ", username, " Password: ", passwd)
+        Login(username, passwd)
+        
+        // Si la connexion est réussie
+        if webpage.UserID != 0 {
+            // Créer une session
+            _, err := CreateSession(w, webpage.UserID)
+            if err != nil {
+                fmt.Println("Erreur lors de la création de la session:", err)
+            } else {
+                // Rediriger vers la page d'accueil
+                http.Redirect(w, r, "/", http.StatusSeeOther)
+                return
+            }
+        }
+    }
+    
+    // Afficher le formulaire de connexion
+    ParseTemplate(w, "web/login.html")
 }
 
 func RegisterPage(w http.ResponseWriter, r *http.Request) {
-	ParseTemplate(w, "web/register.html")
-	println("From HTML: ", r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
-	Register(r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
+	if r.Method == "POST" {
+        username := r.FormValue("username")
+        email := r.FormValue("email")
+        passwd := r.FormValue("passwd")
+        
+        println("From HTML: ", username, email, passwd)
+        Register(username, email, passwd)
+        
+        // Si l'inscription est réussie
+        if webpage.UserID != 0 {
+            // Créer une session
+            _, err := CreateSession(w, webpage.UserID)
+            if err != nil {
+                fmt.Println("Erreur lors de la création de la session:", err)
+            } else {
+                // Rediriger vers la page d'accueil
+                http.Redirect(w, r, "/", http.StatusSeeOther)
+                return
+            }
+        }
+    }
+    
+    // Afficher le formulaire d'inscription
+    ParseTemplate(w, "web/register.html")
 }
 
 

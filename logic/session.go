@@ -6,11 +6,22 @@ import (
 	"encoding/hex"
 	"net/http"
 	"time"
+	"fmt"
+	database "forum/web/database"
 )
 
-var db sql.DB
+var db *sql.DB
 
 var oauthStateStrings = make(map[string]time.Time)
+
+func InitSessionDB() {
+    db = database.GetDB()
+    if db == nil {
+        fmt.Println("Erreur: Base de données non initialisée")
+    } else {
+        fmt.Println("Base de données des sessions initialisée avec succès")
+    }
+}
 
 // Génération d'un état aléatoire pour OAuth
 func GenerateOAuthState() string {
@@ -28,6 +39,14 @@ func GenerateSessionUUID() string {
 
 // Gestion des sessions
 func CreateSession(w http.ResponseWriter, userID int) (*Session, error) {
+
+	if db == nil {
+        InitSessionDB()
+        if db == nil {
+            return nil, fmt.Errorf("erreur: base de données non initialisée")
+        }
+    }
+
 	// Nettoyer les anciennes sessions
 	_, err := db.Exec("DELETE FROM sessions WHERE user_id = ?", userID)
 	if err != nil {
@@ -45,9 +64,12 @@ func CreateSession(w http.ResponseWriter, userID int) (*Session, error) {
 		ExpiresAt: expiresAt,
 		CreatedAt: createdAt,
 	}
+	
+	expiresAtStr := expiresAt.Format("2006-01-02 15:04:05")
+    createdAtStr := createdAt.Format("2006-01-02 15:04:05")
 
 	_, err = db.Exec("INSERT INTO sessions (id, user_id, expires_at, created_at) VALUES (?, ?, ?, ?)",
-		sessionID, userID, expiresAt, createdAt)
+		sessionID, userID, expiresAtStr, createdAtStr)
 	if err != nil {
 		return nil, err
 	}
@@ -66,44 +88,76 @@ func CreateSession(w http.ResponseWriter, userID int) (*Session, error) {
 }
 
 func GetSessionFromCookie(r *http.Request) *Session {
-	cookie, err := r.Cookie("session_id")
-	if err != nil {
-		return nil
-	}
+	if db == nil {
+        InitSessionDB()
+        if db == nil {
+            return nil
+        }
+    }
 
-	var session Session
-	err = db.QueryRow("SELECT id, user_id, expires_at, created_at FROM sessions WHERE id = ?", cookie.Value).
-		Scan(session.ID, session.UserID, session.ExpiresAt, session.CreatedAt)
-	if err != nil {
-		return nil
-	}
-	return &session
-}
-
-func Logout(w http.ResponseWriter, r *http.Request) error {
-    
-    // Récupérer le cookie de session
     cookie, err := r.Cookie("session_id")
     if err != nil {
-        // Si pas de cookie, pas besoin de déconnexion
         return nil
     }
 
-    // Supprimer la session de la base de données
-    _, err = db.Exec("DELETE FROM sessions WHERE id = ?", cookie.Value)
+    var session Session
+    var expiresAtStr, createdAtStr string // Variables intermédiaires
+    
+    // Scanner dans des chaînes de caractères
+    err = db.QueryRow("SELECT id, user_id, expires_at, created_at FROM sessions WHERE id = ?", cookie.Value).
+        Scan(&session.ID, &session.UserID, &expiresAtStr, &createdAtStr)
     if err != nil {
-        return err
+        fmt.Println("Erreur récupération session:", err)
+        return nil
     }
     
-    // Supprimer le cookie
-    DeleteCookie(w, "session_id")
+    // Convertir les chaînes en time.Time
+	session.ExpiresAt, err = time.Parse("2006-01-02 15:04:05", expiresAtStr)
+    if err != nil {
+        fmt.Println("Erreur de conversion expires_at:", err)
+        return nil
+    }
     
-    // Réinitialiser l'état de l'utilisateur
-    webpage.IsConnected = false
-    webpage.UserID = 0
-    webpage.Username = ""
+    session.CreatedAt, err = time.Parse("2006-01-02 15:04:05", createdAtStr)
+    if err != nil {
+        fmt.Println("Erreur de conversion created_at:", err)
+        return nil
+    }
     
-    return nil
+    return &session
+}
+
+func Logout(w http.ResponseWriter, r *http.Request) error {
+   // S'assurer que db est initialisé
+   if db == nil {
+	InitSessionDB()
+	if db == nil {
+		return fmt.Errorf("erreur: base de données non initialisée")
+	}
+}
+
+// Récupérer le cookie de session
+cookie, err := r.Cookie("session_id")
+if err != nil {
+	// Si pas de cookie, pas besoin de déconnexion
+	return nil
+}
+
+// Supprimer la session de la base de données
+_, err = db.Exec("DELETE FROM sessions WHERE id = ?", cookie.Value)
+if err != nil {
+	return err
+}
+
+// Supprimer le cookie
+DeleteCookie(w, "session_id")
+
+// Réinitialiser l'état de l'utilisateur
+webpage.IsConnected = false
+webpage.UserID = 0
+webpage.Username = ""
+
+return nil
 }
 
 
