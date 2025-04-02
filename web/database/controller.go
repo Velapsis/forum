@@ -24,7 +24,7 @@ func DefineRequests() {
 	query.InsertUser = `INSERT INTO users (username, email, password, id) VALUES (?, ?, ?, ?)`
 	query.GetUserID = `SELECT id FROM users WHERE username = ?`
 	query.GetUsername = `SELECT username FROM users WHERE id = ?`
-	query.InsertPost = `INSERT INTO posts (id, title, content, topic_id, created_by, created_at, updated_at VALUES (?, ?, ?, ?, ?, ?, ?)`
+	query.InsertPost = `INSERT INTO posts (id, title, content, topic_id, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	// Sql.UpdateUsernameRequest = `UPDATE user SET username = ? WHERE id = ?`
 	// Sql.UpdateEmailRequest = `UPDATE user SET email = ? WHERE id = ?`
 	// Sql.UpdatePasswordRequest = `UPDATE user SET password = ? WHERE id = ?`
@@ -37,7 +37,7 @@ func AddUser(username string, email string, password string, id int) {
 	cred := strings.Join(args, " ")
 	println("DB: Attempting to add a new user : [", cred, " ]")
 
-	database.Exec(query.InsertUser, username, email, password, id)
+	Exec(query.InsertUser, username, email, password, id)
 }
 
 func IsUserAvailable(username string, email string) bool {
@@ -111,8 +111,9 @@ func GetUsername(id int) string {
 // POSTS
 func AddPost(id int, title string, content string, topic_id string, created_by string, created_at time.Time, updated_at time.Time) {
 	args := []string{strconv.Itoa(id), content, topic_id, created_by, created_by, created_at.String(), updated_at.String()}
-	cred := strings.Join(args, " ")
-	println("DB: Attempting to add a new user : [", cred, " ]")
-
-	database.Exec(query.InsertPost, id, content, topic_id, created_by, created_at, updated_at)
+	data := strings.Join(args, " ")
+	println("DB: Attempting to add a new post: [", data, " ]")
+	if title != "" && content != "" && topic_id != "" {
+		Exec(query.InsertPost, id, title, content, topic_id, created_by, created_at, updated_at)
+	}
 }
