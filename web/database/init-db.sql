@@ -40,14 +40,14 @@ CREATE TABLE IF NOT EXISTS topics (
 -- Table des posts (réponses dans les topics)
 CREATE TABLE IF NOT EXISTS posts (
     id VARCHAR(36) PRIMARY KEY,
-    title TEXT NOT NULL,
+    title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     topic_id VARCHAR(36) NOT NULL,
     created_by VARCHAR(36) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    -- FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE,
+    -- FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Table pour stocker les likes/dislikes des posts
