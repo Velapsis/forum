@@ -28,6 +28,8 @@ type WebPage struct {
 	IsConnected bool
 	Username    string
 	UserID      int
+	Email       string
+	CreatedAt   string
 }
 
 type Regex struct {

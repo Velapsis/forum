@@ -33,12 +33,19 @@
             <form action="/post" method="post">
             <button class="navbar-tab" type="submit"> NEW POST </button>
             </form>
+            <form action="/profile" method="post">
             <button class="navbar-tab" type="submit"> {{.Username}} </button>
+            </form>
+            <form action="/logout" method="post">
+            <button class="navbar-tab" type="submit"> LOGOUT </button>
+            </form>
             {{else}}
             <form action="/login" method="post">
             <button class="navbar-tab" type="submit"> SIGN IN </button>
             </form>
             {{end}}
+   
+
         
     </div>
 </div>

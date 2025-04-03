@@ -21,6 +21,10 @@ func Exec(query string, args ...interface{}) {
 	println("DB: Exec database output: ", output)
 }
 
+func GetDB() *sql.DB {
+	return database
+}
+
 func Connect() {
 
 	var err error
