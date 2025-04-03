@@ -27,13 +27,16 @@
 
     <div style="display: flex; justify-content: flex-end;">
             {{if .IsConnected}}
+            <form action="/topic" method="post">
+            <button class="navbar-tab" type="submit"> NEW TOPIC </button>
+            </form>
             <form action="/post" method="post">
-            <button class="navbar-tab" type="submit" href="/post"> NEW POST </button>
+            <button class="navbar-tab" type="submit"> NEW POST </button>
             </form>
             <button class="navbar-tab" type="submit"> {{.Username}} </button>
             {{else}}
             <form action="/login" method="post">
-            <button class="navbar-tab" type="submit" href="/login"> SIGN IN </button>
+            <button class="navbar-tab" type="submit"> SIGN IN </button>
             </form>
             {{end}}
         

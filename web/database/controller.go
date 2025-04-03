@@ -15,7 +15,8 @@ type Query struct {
 	GetEmail    string
 	GetPassword string
 
-	InsertPost string
+	InsertPost  string
+	InsertTopic string
 }
 
 var query Query
@@ -28,6 +29,7 @@ func DefineRequests() {
 	// Sql.UpdateUsernameRequest = `UPDATE user SET username = ? WHERE id = ?`
 	// Sql.UpdateEmailRequest = `UPDATE user SET email = ? WHERE id = ?`
 	// Sql.UpdatePasswordRequest = `UPDATE user SET password = ? WHERE id = ?`
+	query.InsertTopic = `INSERT INTO topics (id, title, content, category_id, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
 }
 
 // USERS
@@ -92,19 +94,13 @@ func IsUserCorrect(username string, password string) bool {
 
 func GetUserID(username string) int {
 	var id int
-	err := database.QueryRow(query.GetUserID, username).Scan(&id)
-	if err != nil {
-		println("DB: Error while scanning users: ", err.Error())
-	}
+	database.QueryRow(query.GetUserID, username).Scan(&id)
 	return id
 }
 
 func GetUsername(id int) string {
 	var username string
-	err := database.QueryRow(query.GetUsername, id).Scan(&username)
-	if err != nil {
-		println("DB: Error while scanning users: ", err.Error())
-	}
+	database.QueryRow(query.GetUsername, id).Scan(&username)
 	return username
 }
 
@@ -115,5 +111,14 @@ func AddPost(id int, title string, content string, topic_id string, created_by s
 	println("DB: Attempting to add a new post: [", data, " ]")
 	if title != "" && content != "" && topic_id != "" {
 		Exec(query.InsertPost, id, title, content, topic_id, created_by, created_at, updated_at)
+	}
+}
+
+func AddTopic(id int, title string, content string, category_id string, created_by string, created_at time.Time, updated_at time.Time) {
+	args := []string{strconv.Itoa(id), content, category_id, created_by, created_by, created_at.String(), updated_at.String()}
+	data := strings.Join(args, " ")
+	println("DB: Attempting to add a new topic: [", data, " ]")
+	if title != "" && content != "" && category_id != "" {
+		Exec(query.InsertTopic, id, title, content, category_id, created_by, created_at, updated_at)
 	}
 }

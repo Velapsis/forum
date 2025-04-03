@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Tiny5' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>
+    <title> Forum </title>
+</head>
+
+
+<body>
+
+    <div class="navbar">
+        <div style="display: flex; gap: 5px">
+            <form action="/" method="post">
+            <button class="navbar-tab" type="submit"> HOME </button>
+            </form>
+        </div>
+    </div>
+
+    <div style="display: flex; justify-content: center; margin-top: 5%;">
+
+    <div class="div-login" style="display: flex; flex-direction:column; width:20%">
+        <p class="title"> NEW TOPIC </p>
+        <form action="/topic" method="post">
+        <input type="text" name="category" class="text-input" placeholder="Category">
+        <input type="text" name="title" class="text-input" placeholder="Title">
+        <textarea name="desc" class="text-input" placeholder="Description"></textarea>
+        <button type="submit" class="btn-login"> Publish </button>
+        </form>
+    </div>
+
+    </div>
+        
+    
+</body>
+
+</html>

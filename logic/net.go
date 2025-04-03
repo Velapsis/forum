@@ -25,7 +25,8 @@ func CreateWebsite() {
 	http.HandleFunc("/login", LoginPage)
 	http.HandleFunc("/register", RegisterPage)
 	http.HandleFunc("/profile", ProfilePage)
-	http.HandleFunc("/post", PostPage)
+	http.HandleFunc("/post", NewPostPage)
+	http.HandleFunc("/topic", NewTopicPage)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("web/static"))))
 	http.ListenAndServe(website.Port, nil)
 }
@@ -55,9 +56,14 @@ func ProfilePage(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/profile.html")
 }
 
-func PostPage(w http.ResponseWriter, r *http.Request) {
+func NewPostPage(w http.ResponseWriter, r *http.Request) {
 	ParseTemplate(w, "web/post.html")
 	CreatePost(webpage.UserID, r.FormValue("topic"), r.FormValue("title"), r.FormValue("postcontent"))
+}
+
+func NewTopicPage(w http.ResponseWriter, r *http.Request) {
+	ParseTemplate(w, "web/topic.html")
+	CreateTopic(webpage.UserID, r.FormValue("category"), r.FormValue("title"), r.FormValue("desc"))
 }
 
 func ParseTemplate(w http.ResponseWriter, tempPath string) {
