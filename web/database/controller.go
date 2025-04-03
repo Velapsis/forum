@@ -14,6 +14,9 @@ type Query struct {
 	GetEmail    string
 	GetPassword string
 	GetCreatedAt string
+	UpdateUsername string
+	UpdateEmail string
+	UpdatePassword string
 }
 
 var query Query
@@ -24,9 +27,12 @@ func DefineRequests() {
 	query.GetUsername = `SELECT username FROM users WHERE id = ?`
 	query.GetEmail = `SELECT email FROM users WHERE id = ?`
 	query.GetCreatedAt = `SELECT created_at FROM users WHERE id = ?`
-	// Sql.UpdateUsernameRequest = `UPDATE user SET username = ? WHERE id = ?`
-	// Sql.UpdateEmailRequest = `UPDATE user SET email = ? WHERE id = ?`
-	// Sql.UpdatePasswordRequest = `UPDATE user SET password = ? WHERE id = ?`
+	query.GetPassword = `SELECT password FROM users WHERE id = ?`
+	query.UpdateUsername = `UPDATE users SET username = ? WHERE id = ?`
+    query.UpdateEmail = `UPDATE users SET email = ? WHERE id = ?`
+    query.UpdatePassword = `UPDATE users SET password = ? WHERE id = ?`
+    
+
 }
 
 // User représente un utilisateur du forum
