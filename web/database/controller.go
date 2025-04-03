@@ -1,8 +1,8 @@
 package database
 
 import (
-	"strconv"
 	"database/sql" // Ajout de l'import nécessaire
+	"strconv"
 	"strings"
 	"time"
 
@@ -10,14 +10,17 @@ import (
 )
 
 type Query struct {
-	
-	InsertPost  	  string
-	InsertTopic 	  string
+	InsertPost        string
+	InsertTopic       string
 	InsertUser        string
 	GetUserID         string
 	GetUserByUsername string
 	GetUserByEmail    string
 	GetPasswordHash   string
+	GetCreatedAt      string
+	UpdateUsername    string
+	UpdateEmail       string
+	UpdatePassword    string
 }
 
 var query Query
@@ -31,7 +34,12 @@ func DefineRequests() {
 	// Sql.UpdateUsernameRequest = `UPDATE user SET username = ? WHERE id = ?`
 	// Sql.UpdateEmailRequest = `UPDATE user SET email = ? WHERE id = ?`
 	// Sql.UpdatePasswordRequest = `UPDATE user SET password = ? WHERE id = ?`
+	query.InsertPost = `INSERT INTO posts (id, title, content, topic_id, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	query.InsertTopic = `INSERT INTO topics (id, title, content, category_id, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
+	query.GetCreatedAt = `SELECT created_at FROM users WHERE id = ?`
+	query.UpdateUsername = `UPDATE users SET username = ? WHERE id = ?`
+	query.UpdatePassword = `UPDATE users SET password = ? WHERE id = ?`
+
 }
 
 // AddUser ajoute un nouvel utilisateur avec mot de passe déjà haché
@@ -98,8 +106,6 @@ func GetUserID(username string) int {
 	return id
 }
 
-
-
 // POSTS
 func AddPost(id int, title string, content string, topic_id string, created_by string, created_at time.Time, updated_at time.Time) {
 	args := []string{strconv.Itoa(id), content, topic_id, created_by, created_by, created_at.String(), updated_at.String()}
@@ -130,4 +136,33 @@ func UserExists(username string) bool {
 	var existingUsername string
 	err := database.QueryRow(query.GetUserByUsername, username).Scan(&existingUsername)
 	return err != sql.ErrNoRows
+}
+
+func GetEmail(id int) string {
+	if id == 0 {
+		return ""
+	}
+
+	var email string
+	err := database.QueryRow(query.GetEmail, id).Scan(&email)
+	if err != nil {
+		println("DB: Error while scanning users: ", err.Error())
+	}
+	return email
+}
+
+func GetCreatedAt(id int) string {
+	var createdAtStr string
+	err := database.QueryRow(query.GetCreatedAt, id).Scan(&createdAtStr)
+	if err != nil {
+		println("DB: Error while getting created_at:", err.Error())
+		return "Unknown"
+	}
+
+	// Formater la date pour l'affichage
+	if t, err := time.Parse("2006-01-02 15:04:05", createdAtStr); err == nil {
+		return t.Format("January 2, 2006")
+	}
+
+	return createdAtStr
 }

@@ -8,20 +8,31 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	database "forum/web/database"
 )
 
-var db sql.DB
-
+var db *sql.DB
 var oauthStateStrings = make(map[string]time.Time)
 
-// Génération d'un état aléatoire pour OAuth
+// InitSessionDB initialise la connexion à la base de données pour les sessions
+func InitSessionDB() {
+	db = database.GetDB()
+	if db == nil {
+		fmt.Println("Erreur: Base de données non initialisée")
+	} else {
+		fmt.Println("Base de données des sessions initialisée avec succès")
+	}
+}
+
+// GenerateOAuthState génère un état aléatoire pour OAuth
 func GenerateOAuthState() string {
 	state := GenerateSessionUUID()
 	oauthStateStrings[state] = time.Now().Add(10 * time.Minute) // Expire après 10 minutes
 	return state
 }
 
-// Vérification de l'état OAuth
+// ValidateOAuthState vérifie la validité d'un état OAuth
 func ValidateOAuthState(state string) bool {
 	expiresAt, exists := oauthStateStrings[state]
 	if !exists {
@@ -39,9 +50,9 @@ func ValidateOAuthState(state string) bool {
 	return true
 }
 
-// Génération d'un UUID plus sécurisé
+// GenerateSessionUUID génère un UUID sécurisé pour les sessions
 func GenerateSessionUUID() string {
-	uuid := make([]byte, 32) // Augmenter à 32 bytes pour plus de sécurité
+	uuid := make([]byte, 32) // 32 bytes pour plus de sécurité
 	_, err := rand.Read(uuid)
 	if err != nil {
 		// En cas d'erreur, logger et générer quelque chose d'aléatoire comme fallback
@@ -51,8 +62,15 @@ func GenerateSessionUUID() string {
 	return hex.EncodeToString(uuid)
 }
 
-// Gestion des sessions
+// CreateSession crée une nouvelle session pour un utilisateur
 func CreateSession(w http.ResponseWriter, userID int) (*Session, error) {
+	if db == nil {
+		InitSessionDB()
+		if db == nil {
+			return nil, fmt.Errorf("erreur: base de données non initialisée")
+		}
+	}
+
 	// Nettoyer les anciennes sessions
 	_, err := db.Exec("DELETE FROM sessions WHERE user_id = ?", userID)
 	if err != nil {
@@ -71,8 +89,11 @@ func CreateSession(w http.ResponseWriter, userID int) (*Session, error) {
 		CreatedAt: createdAt,
 	}
 
+	expiresAtStr := expiresAt.Format("2006-01-02 15:04:05")
+	createdAtStr := createdAt.Format("2006-01-02 15:04:05")
+
 	_, err = db.Exec("INSERT INTO sessions (id, user_id, expires_at, created_at) VALUES (?, ?, ?, ?)",
-		sessionID, userID, expiresAt, createdAt)
+		sessionID, userID, expiresAtStr, createdAtStr)
 	if err != nil {
 		return nil, err
 	}
@@ -93,32 +114,53 @@ func CreateSession(w http.ResponseWriter, userID int) (*Session, error) {
 	return session, nil
 }
 
-// Récupérer une session à partir d'un cookie et vérifier sa validité
+// GetSessionFromCookie récupère une session à partir d'un cookie
 func GetSessionFromCookie(r *http.Request) (*Session, error) {
+	if db == nil {
+		InitSessionDB()
+		if db == nil {
+			return nil, fmt.Errorf("erreur: base de données non initialisée")
+		}
+	}
+
 	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		return nil, fmt.Errorf("cookie not found: %w", err)
 	}
 
-	// Récupérer la session
 	var session Session
-	err = db.QueryRow(`
-		SELECT id, user_id, expires_at, created_at 
-		FROM sessions 
-		WHERE id = ? AND expires_at > ?`,
-		cookie.Value, time.Now()).Scan(&session.ID, &session.UserID, &session.ExpiresAt, &session.CreatedAt)
+	var expiresAtStr, createdAtStr string // Variables intermédiaires
 
+	// Scanner dans des chaînes de caractères
+	err = db.QueryRow("SELECT id, user_id, expires_at, created_at FROM sessions WHERE id = ?", cookie.Value).
+		Scan(&session.ID, &session.UserID, &expiresAtStr, &createdAtStr)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("session not found or expired")
+			return nil, fmt.Errorf("session not found")
 		}
 		return nil, fmt.Errorf("database error: %w", err)
+	}
+
+	// Convertir les chaînes en time.Time
+	session.ExpiresAt, err = time.Parse("2006-01-02 15:04:05", expiresAtStr)
+	if err != nil {
+		return nil, fmt.Errorf("erreur de conversion expires_at: %w", err)
+	}
+
+	session.CreatedAt, err = time.Parse("2006-01-02 15:04:05", createdAtStr)
+	if err != nil {
+		return nil, fmt.Errorf("erreur de conversion created_at: %w", err)
+	}
+
+	// Vérifier si la session a expiré
+	if time.Now().After(session.ExpiresAt) {
+		return nil, fmt.Errorf("session expired")
 	}
 
 	return &session, nil
 }
 
-// Vérifier si la session est valide et appartient à l'utilisateur
+// IsValidSession vérifie si une session est valide et appartient à l'utilisateur
 func IsValidSession(r *http.Request, userID int) bool {
 	session, err := GetSessionFromCookie(r)
 	if err != nil {
@@ -129,7 +171,44 @@ func IsValidSession(r *http.Request, userID int) bool {
 	return session.UserID == userID && time.Now().Before(session.ExpiresAt)
 }
 
-// Suppression de session avec vérification d'appartenance
+// Logout déconnecte un utilisateur en supprimant sa session
+func Logout(w http.ResponseWriter, r *http.Request) error {
+	// S'assurer que db est initialisé
+	if db == nil {
+		InitSessionDB()
+		if db == nil {
+			return fmt.Errorf("erreur: base de données non initialisée")
+		}
+	}
+
+	// Récupérer le cookie de session
+	cookie, err := r.Cookie("session_id")
+	if err != nil {
+		// Si pas de cookie, pas besoin de déconnexion
+		return nil
+	}
+
+	// Supprimer la session de la base de données
+	_, err = db.Exec("DELETE FROM sessions WHERE id = ?", cookie.Value)
+	if err != nil {
+		return err
+	}
+
+	// Supprimer le cookie
+	DeleteCookie(w, "session_id")
+
+	// Réinitialiser l'état de l'utilisateur
+	// Assurez-vous que webpage est bien défini dans votre code
+	/*
+		webpage.IsConnected = false
+		webpage.UserID = 0
+		webpage.Username = ""
+	*/
+
+	return nil
+}
+
+// DeleteSession supprime une session spécifique
 func DeleteSession(w http.ResponseWriter, r *http.Request) error {
 	// Récupérer l'ID de session
 	cookie, err := r.Cookie("session_id")
@@ -160,7 +239,7 @@ func DeleteSession(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-// Suppression de cookie plus sécurisée
+// DeleteCookie supprime un cookie du navigateur client
 func DeleteCookie(w http.ResponseWriter, cookieName string) {
 	cookie := &http.Cookie{
 		Name:     cookieName,
@@ -175,13 +254,20 @@ func DeleteCookie(w http.ResponseWriter, cookieName string) {
 	http.SetCookie(w, cookie)
 }
 
-// Nettoyage périodique des sessions expirées
+// DeleteExpiredSessions nettoie les sessions expirées dans la base de données
 func DeleteExpiredSessions() error {
-	_, err := db.Exec("DELETE FROM sessions WHERE expires_at < ?", time.Now())
+	if db == nil {
+		InitSessionDB()
+		if db == nil {
+			return fmt.Errorf("erreur: base de données non initialisée")
+		}
+	}
+
+	_, err := db.Exec("DELETE FROM sessions WHERE expires_at < ?", time.Now().Format("2006-01-02 15:04:05"))
 	return err
 }
 
-// Nouvelle fonction pour renouveler une session
+// RenewSession renouvelle une session existante
 func RenewSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
 	// Récupérer la session actuelle
 	session, err := GetSessionFromCookie(r)
@@ -191,10 +277,11 @@ func RenewSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
 
 	// Définir une nouvelle date d'expiration
 	newExpiresAt := time.Now().Add(2 * time.Hour)
+	newExpiresAtStr := newExpiresAt.Format("2006-01-02 15:04:05")
 
 	// Mettre à jour la base de données
 	_, err = db.Exec("UPDATE sessions SET expires_at = ? WHERE id = ?",
-		newExpiresAt, session.ID)
+		newExpiresAtStr, session.ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to update session: %w", err)
 	}
@@ -217,7 +304,7 @@ func RenewSession(w http.ResponseWriter, r *http.Request) (*Session, error) {
 	return session, nil
 }
 
-// Middleware de vérification de session
+// SessionMiddleware middleware pour vérifier l'authentification sur les routes protégées
 func SessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Chemins qui ne nécessitent pas d'authentification
@@ -230,7 +317,7 @@ func SessionMiddleware(next http.Handler) http.Handler {
 		}
 
 		// Vérifier si le chemin est public
-		if publicPaths[r.URL.Path] || (len(r.URL.Path) >= 8 && publicPaths[r.URL.Path[:8]]) {
+		if publicPaths[r.URL.Path] || (len(r.URL.Path) >= 8 && r.URL.Path[:7] == "/static") {
 			next.ServeHTTP(w, r)
 			return
 		}
