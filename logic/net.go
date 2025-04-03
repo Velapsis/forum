@@ -104,8 +104,33 @@ func RegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProfilePage(w http.ResponseWriter, r *http.Request) {
-	ParseTemplate(w, "web/profile.html")
+    session := GetSessionFromCookie(r)
+    if session == nil {
+        // Rediriger vers la page de connexion si non connecté
+        http.Redirect(w, r, "/login", http.StatusSeeOther)
+        return
+    }
+    
+    // Récupérer les informations de l'utilisateur
+    userID := session.UserID
+    username := database.GetUsername(userID)
+    email := database.GetEmail(userID)
+    createdAt := database.GetCreatedAt(userID)
+    
+    // Mettre à jour les données de la page
+    webpage = WebPage{
+        IsConnected: true,
+        UserID:      userID,
+        Username:    username,
+        Email:       email,
+        CreatedAt:   createdAt,
+      
+    }
+    
+    // Afficher la page de profil
+    ParseTemplate(w, "web/profile.html")
 }
+
 
 
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {

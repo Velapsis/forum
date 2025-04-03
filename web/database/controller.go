@@ -2,6 +2,7 @@ package database
 
 import (
 	"strings"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -12,6 +13,7 @@ type Query struct {
 	GetUsername string
 	GetEmail    string
 	GetPassword string
+	GetCreatedAt string
 }
 
 var query Query
@@ -20,6 +22,8 @@ func DefineRequests() {
 	query.InsertUser = `INSERT INTO users (username, email, password, id) VALUES (?, ?, ?, ?)`
 	query.GetUserID = `SELECT id FROM users WHERE username = ?`
 	query.GetUsername = `SELECT username FROM users WHERE id = ?`
+	query.GetEmail = `SELECT email FROM users WHERE id = ?`
+	query.GetCreatedAt = `SELECT created_at FROM users WHERE id = ?`
 	// Sql.UpdateUsernameRequest = `UPDATE user SET username = ? WHERE id = ?`
 	// Sql.UpdateEmailRequest = `UPDATE user SET email = ? WHERE id = ?`
 	// Sql.UpdatePasswordRequest = `UPDATE user SET password = ? WHERE id = ?`
@@ -104,4 +108,33 @@ func GetUsername(id int) string {
 		println("DB: Error while scanning users: ", err.Error())
 	}
 	return username
+}
+
+func GetEmail(id int) string {
+	if id == 0 {
+		return ""
+	}
+	
+	var email string
+	err := database.QueryRow(query.GetEmail, id).Scan(&email)
+	if err != nil {
+		println("DB: Error while scanning users: ", err.Error())
+	}
+	return email
+}
+
+func GetCreatedAt(id int) string{
+	var createdAtStr string
+    err := database.QueryRow(query.GetCreatedAt, id).Scan(&createdAtStr)
+    if err != nil {
+        println("DB: Error while getting created_at:", err.Error())
+        return "Unknown"
+    }
+    
+    // Formater la date pour l'affichage
+    if t, err := time.Parse("2006-01-02 15:04:05", createdAtStr); err == nil {
+        return t.Format("January 2, 2006")
+    }
+    
+    return createdAtStr
 }
