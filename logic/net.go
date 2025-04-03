@@ -37,87 +37,84 @@ func CreateWebsite() {
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	session := GetSessionFromCookie(r)
-    
-    if session != nil {
-        webpage = WebPage{
-            IsConnected: true,
-            UserID:      session.UserID,
-            Username:    database.GetUsername(session.UserID),
-        }
-    } else {
-        webpage = WebPage{
-            IsConnected: false,
-            UserID:      0,
-            Username:    "",
-        }
-    }
-    
-    ParseTemplate(w, "web/index.html")
+
+	if session != nil {
+		webpage = WebPage{
+			IsConnected: true,
+			UserID:      session.UserID,
+			Username:    database.GetUsername(session.UserID),
+		}
+	} else {
+		webpage = WebPage{
+			IsConnected: false,
+			UserID:      0,
+			Username:    "",
+		}
+	}
+
+	ParseTemplate(w, "web/index.html")
 }
 
 func LoginPage(w http.ResponseWriter, r *http.Request) {
 	println("From HTML: ", r.FormValue("username"), r.FormValue("passwd"))
 	Login(r.FormValue("username"), r.FormValue("passwd"), r)
-    if webpage.UserID != 0 {
-        // Créer une session
-        _, err := CreateSession(w, webpage.UserID)
-        if err != nil {
-            fmt.Println("Erreur lors de la création de la session:", err)
-        } else {
-            // Rediriger vers la page d'accueil
-            http.Redirect(w, r, "/", http.StatusSeeOther)
-            return
-        }
-    }
-    ParseTemplate(w, "web/login.html")
+	if webpage.UserID != 0 {
+		// Créer une session
+		_, err := CreateSession(w, webpage.UserID)
+		if err != nil {
+			fmt.Println("Erreur lors de la création de la session:", err)
+		} else {
+			// Rediriger vers la page d'accueil
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+	}
+	ParseTemplate(w, "web/login.html")
 }
 
 func RegisterPage(w http.ResponseWriter, r *http.Request) {
-	
+
 	println("From HTML: ", r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"))
 	Register(r.FormValue("username"), r.FormValue("email"), r.FormValue("passwd"), r)
-    if webpage.UserID != 0 {
-        // Créer une session
-        _, err := CreateSession(w, webpage.UserID)
-        if err != nil {
-            fmt.Println("Erreur lors de la création de la session:", err)
-        } else {
-            // Rediriger vers la page d'accueil
-            http.Redirect(w, r, "/", http.StatusSeeOther)
-            return
-        }
-    }    
-    ParseTemplate(w, "web/register.html")
+	if webpage.UserID != 0 {
+		// Créer une session
+		_, err := CreateSession(w, webpage.UserID)
+		if err != nil {
+			fmt.Println("Erreur lors de la création de la session:", err)
+		} else {
+			// Rediriger vers la page d'accueil
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+	}
+	ParseTemplate(w, "web/register.html")
 }
-    
-
 
 func ProfilePage(w http.ResponseWriter, r *http.Request) {
-    session := GetSessionFromCookie(r)
-    if session == nil {
-        // Rediriger vers la page de connexion si non connecté
-        http.Redirect(w, r, "/login", http.StatusSeeOther)
-        return
-    }
-    
-    // Récupérer les informations de l'utilisateur
-    userID := session.UserID
-    username := database.GetUsername(userID)
-    email := database.GetEmail(userID)
-    createdAt := database.GetCreatedAt(userID)
-    
-    // Mettre à jour les données de la page
-    webpage = WebPage{
-        IsConnected: true,
-        UserID:      userID,
-        Username:    username,
-        Email:       email,
-        CreatedAt:   createdAt,
-      
-    }
-    
-    // Afficher la page de profil
-    ParseTemplate(w, "web/profile.html")
+	session := GetSessionFromCookie(r)
+	if session == nil {
+		// Rediriger vers la page de connexion si non connecté
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	// Récupérer les informations de l'utilisateur
+	userID := session.UserID
+	username := database.GetUsername(userID)
+	email := database.GetEmail(userID)
+	createdAt := database.GetCreatedAt(userID)
+
+	// Mettre à jour les données de la page
+	webpage = WebPage{
+		IsConnected: true,
+		UserID:      userID,
+		Username:    username,
+		Email:       email,
+		CreatedAt:   createdAt,
+	}
+
+	// Afficher la page de profil
+	ParseTemplate(w, "web/profile.html")
 }
 
 func NewPostPage(w http.ResponseWriter, r *http.Request) {
@@ -130,24 +127,22 @@ func NewTopicPage(w http.ResponseWriter, r *http.Request) {
 	CreateTopic(webpage.UserID, r.FormValue("category"), r.FormValue("title"), r.FormValue("desc"))
 }
 
-
 func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-    err := Logout(w, r)
-    if err != nil {
-        fmt.Println("Erreur lors de la déconnexion:", err)
-    }
-    
-    // Important: réinitialiser explicitement les données de l'utilisateur
-    webpage = WebPage{
-        IsConnected: false,
-        UserID:      0,
-        Username:    "",
-    }
-    
-    // Rediriger vers la page d'accueil après la déconnexion
-    http.Redirect(w, r, "/", http.StatusSeeOther)
-}
+	err := Logout(w, r)
+	if err != nil {
+		fmt.Println("Erreur lors de la déconnexion:", err)
+	}
 
+	// Important: réinitialiser explicitement les données de l'utilisateur
+	webpage = WebPage{
+		IsConnected: false,
+		UserID:      0,
+		Username:    "",
+	}
+
+	// Rediriger vers la page d'accueil après la déconnexion
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
 
 func ParseTemplate(w http.ResponseWriter, tempPath string) {
 	tmpl, err := template.ParseFiles(tempPath)

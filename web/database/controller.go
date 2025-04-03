@@ -2,6 +2,8 @@ package database
 
 import (
 	"database/sql" // Ajout de l'import nécessaire
+	"fmt"
+	"forum/logic"
 	"strconv"
 	"strings"
 	"time"
@@ -123,7 +125,7 @@ func AddTopic(id int, title string, content string, category_id string, created_
 	if title != "" && content != "" && category_id != "" {
 		Exec(query.InsertTopic, id, title, content, category_id, created_by, created_at, updated_at)
 	}
-	err := database.QueryRow(query.GetUserID, username).Scan(&id)
+	err := database.QueryRow(query.GetUserID, query.GetUserByUsername).Scan(&id)
 	if err != nil {
 		println("DB: Error while scanning users:", err.Error())
 		return 0
@@ -144,7 +146,7 @@ func GetEmail(id int) string {
 	}
 
 	var email string
-	err := database.QueryRow(query.GetEmail, id).Scan(&email)
+	err := database.QueryRow(query.GetUserByEmail, id).Scan(&email)
 	if err != nil {
 		println("DB: Error while scanning users: ", err.Error())
 	}
@@ -165,4 +167,29 @@ func GetCreatedAt(id int) string {
 	}
 
 	return createdAtStr
+}
+
+// GetUserByUsername récupère les informations d'un utilisateur par son nom d'utilisateur
+func GetUserByUsername(username string) (*logic.User, error) {
+	if database == nil {
+		return nil, fmt.Errorf("base de données non initialisée")
+	}
+
+	var user logic.User
+	var password string // Pour stocker le mot de passe haché
+
+	err := database.QueryRow("SELECT id, username, email, password FROM users WHERE username = ?", username).
+		Scan(&user.ID, &user.Username, &user.Email, &password)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("utilisateur non trouvé")
+		}
+		return nil, fmt.Errorf("erreur lors de la récupération de l'utilisateur: %w", err)
+	}
+
+	// Stocker le mot de passe haché séparément pour des raisons de sécurité
+	user.PasswordHash = password
+
+	return &user, nil
 }

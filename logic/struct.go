@@ -19,9 +19,10 @@ type Website struct {
 }
 
 type User struct {
-	Username string
-	Email    string
-	Password string
+	ID  	 	 string 
+	Username 	 string
+	Email    	 string
+	PasswordHash string
 }
 
 type WebPage struct {
