@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql" // Ajout de l'import nécessaire
 	"fmt"
-	"forum/logic"
+
 	"strconv"
 	"strings"
 	"time"
@@ -23,6 +23,12 @@ type Query struct {
 	UpdateUsername    string
 	UpdateEmail       string
 	UpdatePassword    string
+}
+type User struct {
+	ID           string
+	Username     string
+	Email        string
+	PasswordHash string
 }
 
 var query Query
@@ -118,7 +124,7 @@ func AddPost(id int, title string, content string, topic_id string, created_by s
 	}
 }
 
-func AddTopic(id int, title string, content string, category_id string, created_by string, created_at time.Time, updated_at time.Time) {
+func AddTopic(id int, title string, content string, category_id string, created_by string, created_at time.Time, updated_at time.Time) int {
 	args := []string{strconv.Itoa(id), content, category_id, created_by, created_by, created_at.String(), updated_at.String()}
 	data := strings.Join(args, " ")
 	println("DB: Attempting to add a new topic: [", data, " ]")
@@ -170,12 +176,12 @@ func GetCreatedAt(id int) string {
 }
 
 // GetUserByUsername récupère les informations d'un utilisateur par son nom d'utilisateur
-func GetUserByUsername(username string) (*logic.User, error) {
+func GetUserByUsername(username string) (*User, error) {
 	if database == nil {
 		return nil, fmt.Errorf("base de données non initialisée")
 	}
 
-	var user logic.User
+	var user User
 	var password string // Pour stocker le mot de passe haché
 
 	err := database.QueryRow("SELECT id, username, email, password FROM users WHERE username = ?", username).

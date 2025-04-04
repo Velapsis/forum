@@ -100,7 +100,7 @@ func ProfilePage(w http.ResponseWriter, r *http.Request) {
 
 	// Récupérer les informations de l'utilisateur
 	userID := session.UserID
-	username := database.GetUsername(userID)
+	username := database.GetUser(userID)
 	email := database.GetEmail(userID)
 	createdAt := database.GetCreatedAt(userID)
 

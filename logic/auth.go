@@ -2,7 +2,8 @@ package logic
 
 import (
 	"fmt"
-	database "forum/web/database"
+	"forum/web/database"
+
 	"hash/fnv"
 	"math/rand/v2"
 	"net/http"
@@ -66,15 +67,15 @@ func (rl *RateLimiter) IsLimited(ip string) bool {
 func RateLimitMiddleware(next http.HandlerFunc, action string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ip := r.RemoteAddr
-		
+
 		// Ajouter un identifiant d'action pour séparer les limits par type d'action
 		actionKey := ip + ":" + action
-		
+
 		if limiter.IsLimited(actionKey) {
 			http.Error(w, "Too many attempts, please try again later", http.StatusTooManyRequests)
 			return
 		}
-		
+
 		next.ServeHTTP(w, r)
 	}
 }
@@ -97,13 +98,13 @@ func Login(username string, passwd string, r *http.Request) (bool, string) {
 	if limiter.IsLimited(r.RemoteAddr + ":login") {
 		return false, "Too many login attempts, please try again later"
 	}
-	
+
 	// Récupérer le hash du mot de passe de la base de données
 	hashedPassword := database.GetUserPasswordHash(username)
 	if hashedPassword == "" {
 		return false, "Username or password incorrect"
 	}
-	
+
 	// Vérifier le mot de passe avec bcrypt
 	if CheckPasswordHash(passwd, hashedPassword) {
 		webpage.UserID = database.GetUserID(username)
@@ -112,33 +113,34 @@ func Login(username string, passwd string, r *http.Request) (bool, string) {
 	}
 }
 
+
 // Register modifié pour utiliser bcrypt
 func Register(username string, email string, passwd string, r *http.Request) (bool, string) {
 	// Vérifier le rate limiting
 	if limiter.IsLimited(r.RemoteAddr + ":register") {
 		return false, "Too many registration attempts, please try again later"
 	}
-	
+
 	println("Attempting to register to the database")
 	println("Creds: ", username, email, "********") // Ne pas logger le mot de passe en clair
-	
+
 	if IsLegit(username, email, passwd) && database.IsUserAvailable(username, email) {
 		println("User is legit, attempting to add to database..")
-		
+
 		// Hasher le mot de passe avant stockage
 		hashedPassword, err := HashPassword(passwd)
 		if err != nil {
 			return false, "Error processing password"
 		}
-		
+
 		// Stocker l'utilisateur avec le mot de passe haché
 		database.AddUser(username, email, hashedPassword, GenerateUUID(username))
-		
+
 		// Connecter l'utilisateur
 		success, msg := Login(username, passwd, r)
 		return success, msg
 	}
-	
+
 	return false, "Registration failed"
 }
 
@@ -157,10 +159,10 @@ func IsLegit(username string, email string, passwd string) bool {
 	// Regex check
 	isUsernameValid, _ := regexp.MatchString(regex.Username, username)
 	isEmailValid, _ := regexp.MatchString(regex.Email, email)
-	if !isUsernameValid { 
+	if !isUsernameValid {
 		fmt.Println("Username is not valid")
 		return false
-	} else if !isEmailValid { 
+	} else if !isEmailValid {
 		fmt.Println("Email is not valid")
 		return false
 	}
