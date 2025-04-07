@@ -36,14 +36,15 @@ func CreateWebsite() {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	session := GetSessionFromCookie(r)
+	session, err := GetSessionFromCookie(r)
 
 	if session != nil {
 		webpage = WebPage{
 			IsConnected: true,
 			UserID:      session.UserID,
-			Username:    database.GetUsername(session.UserID),
+			Username:    database.GetUsernameByID(session.UserID),
 		}
+		fmt.Println(err)
 	} else {
 		webpage = WebPage{
 			IsConnected: false,
@@ -91,16 +92,17 @@ func RegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func ProfilePage(w http.ResponseWriter, r *http.Request) {
-	session := GetSessionFromCookie(r)
+	session, err := GetSessionFromCookie(r)
 	if session == nil {
 		// Rediriger vers la page de connexion si non connecté
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		fmt.Println(err)
 		return
 	}
 
 	// Récupérer les informations de l'utilisateur
 	userID := session.UserID
-	username := database.GetUser(userID)
+	username := database.GetUsernameByID(userID)
 	email := database.GetEmail(userID)
 	createdAt := database.GetCreatedAt(userID)
 

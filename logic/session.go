@@ -52,7 +52,7 @@ func ValidateOAuthState(state string) bool {
 
 // GenerateSessionUUID génère un UUID sécurisé pour les sessions
 func GenerateSessionUUID() string {
-	uuid := make([]byte, 32) // 32 bytes pour plus de sécurité
+	uuid := make([]byte, 16) // 16 bytes car probleme avec 32
 	_, err := rand.Read(uuid)
 	if err != nil {
 		// En cas d'erreur, logger et générer quelque chose d'aléatoire comme fallback

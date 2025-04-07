@@ -17,6 +17,7 @@ type Query struct {
 	InsertUser        string
 	GetUserID         string
 	GetUserByUsername string
+	GetUsernameByID       string
 	GetUserByEmail    string
 	GetPasswordHash   string
 	GetCreatedAt      string
@@ -39,6 +40,7 @@ func DefineRequests() {
 	query.GetUserByUsername = `SELECT username FROM users WHERE username = ?`
 	query.GetUserByEmail = `SELECT email FROM users WHERE email = ?`
 	query.GetPasswordHash = `SELECT password FROM users WHERE username = ?`
+	query.GetUsernameByID = `SELECT username FROM users WHERE id = ?`
 	// Sql.UpdateUsernameRequest = `UPDATE user SET username = ? WHERE id = ?`
 	// Sql.UpdateEmailRequest = `UPDATE user SET email = ? WHERE id = ?`
 	// Sql.UpdatePasswordRequest = `UPDATE user SET password = ? WHERE id = ?`
@@ -198,4 +200,13 @@ func GetUserByUsername(username string) (*User, error) {
 	user.PasswordHash = password
 
 	return &user, nil
+}
+func GetUsernameByID(userID int) string {
+	var username string
+	err := database.QueryRow(query.GetUsernameByID, userID).Scan(&username)
+	if err != nil {
+		println("DB: Error while scanning users:", err.Error())
+		return ""
+	}
+	return username
 }

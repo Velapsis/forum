@@ -110,8 +110,11 @@ func Login(username string, passwd string, r *http.Request) (bool, string) {
 		webpage.UserID = database.GetUserID(username)
 	} else {
 		println("Username or password incorrect")
+		
 	}
+	return false, "Username or password incorrect"
 }
+
 
 
 // Register modifié pour utiliser bcrypt

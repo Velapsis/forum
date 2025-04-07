@@ -8,7 +8,7 @@ import (
 )
 
 func CreatePost(userID int, topic string, title string, post string) {
-	database.AddPost(GenerateID(), title, post, topic, database.GetUsername(userID), time.Now(), time.Now())
+	database.AddPost(GenerateID(), title, post, topic, database.GetUsernameByID(userID), time.Now(), time.Now())
 }
 
 func GenerateID() int {
@@ -22,5 +22,5 @@ func AddImage() {
 }
 
 func CreateTopic(userID int, category string, title string, desc string) {
-	database.AddTopic(GenerateID(), title, desc, category, database.GetUsername(userID), time.Now(), time.Now())
+	database.AddTopic(GenerateID(), title, desc, category, database.GetUsernameByID(userID), time.Now(), time.Now())
 }
