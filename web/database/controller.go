@@ -17,6 +17,10 @@ type Query struct {
 
 	InsertPost  string
 	InsertTopic string
+	GetCreatedAt string
+	UpdateUsername string
+	UpdateEmail string
+	UpdatePassword string
 }
 
 var query Query
@@ -25,6 +29,14 @@ func DefineRequests() {
 	query.InsertUser = `INSERT INTO users (username, email, password, id) VALUES (?, ?, ?, ?)`
 	query.GetUserID = `SELECT id FROM users WHERE username = ?`
 	query.GetUsername = `SELECT username FROM users WHERE id = ?`
+	query.GetEmail = `SELECT email FROM users WHERE id = ?`
+	query.GetCreatedAt = `SELECT created_at FROM users WHERE id = ?`
+	query.GetPassword = `SELECT password FROM users WHERE id = ?`
+	query.UpdateUsername = `UPDATE users SET username = ? WHERE id = ?`
+    query.UpdateEmail = `UPDATE users SET email = ? WHERE id = ?`
+    query.UpdatePassword = `UPDATE users SET password = ? WHERE id = ?`
+    
+
 	query.InsertPost = `INSERT INTO posts (id, title, content, topic_id, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
 	// Sql.UpdateUsernameRequest = `UPDATE user SET username = ? WHERE id = ?`
 	// Sql.UpdateEmailRequest = `UPDATE user SET email = ? WHERE id = ?`
@@ -99,9 +111,42 @@ func GetUserID(username string) int {
 }
 
 func GetUsername(id int) string {
+	if id == 0 {
+		return ""
+	}
+	
 	var username string
 	database.QueryRow(query.GetUsername, id).Scan(&username)
 	return username
+}
+
+func GetEmail(id int) string {
+	if id == 0 {
+		return ""
+	}
+	
+	var email string
+	err := database.QueryRow(query.GetEmail, id).Scan(&email)
+	if err != nil {
+		println("DB: Error while scanning users: ", err.Error())
+	}
+	return email
+}
+
+func GetCreatedAt(id int) string{
+	var createdAtStr string
+    err := database.QueryRow(query.GetCreatedAt, id).Scan(&createdAtStr)
+    if err != nil {
+        println("DB: Error while getting created_at:", err.Error())
+        return "Unknown"
+    }
+    
+    // Formater la date pour l'affichage
+    if t, err := time.Parse("2006-01-02 15:04:05", createdAtStr); err == nil {
+        return t.Format("January 2, 2006")
+    }
+    
+    return createdAtStr
 }
 
 // POSTS
