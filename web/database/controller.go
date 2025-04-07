@@ -138,3 +138,32 @@ func AddTopic(id int, title string, content string, category_id string, created_
 		Exec(query.InsertTopic, id, title, content, category_id, created_by, created_at, updated_at)
 	}
 }
+
+func GetEmail(id int) string {
+	if id == 0 {
+		return ""
+	}
+	
+	var email string
+	err := database.QueryRow(query.GetEmail, id).Scan(&email)
+	if err != nil {
+		println("DB: Error while scanning users: ", err.Error())
+	}
+	return email
+}
+
+func GetCreatedAt(id int) string {
+	var createdAtStr string
+    err := database.QueryRow(query.GetCreatedAt, id).Scan(&createdAtStr)
+    if err != nil {
+        println("DB: Error while getting created_at:", err.Error())
+        return "Unknown"
+    }
+    
+    // Formater la date pour l'affichage
+    if t, err := time.Parse("2006-01-02 15:04:05", createdAtStr); err == nil {
+        return t.Format("January 2, 2006")
+    }
+    
+    return createdAtStr
+}
