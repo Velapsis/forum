@@ -30,6 +30,16 @@ type RateLimiter struct {
 	window time.Duration // Fenêtre de temps pour le rate limit
 }
 
+func Register(username string, email string, passwd string) {
+	println("Attempting to register to the database")
+	println("Creds: ", username, email, passwd)
+	if IsLegit(username, email, passwd) && database.IsUserAvailable(username, email) {
+		println("User is legit, attempting to add to database..")
+		database.AddUser(username, email, passwd, GenerateUUID(username))
+		Login(username, passwd)
+	}
+}
+
 // Singleton du rate limiter
 var limiter = NewRateLimiter(5, time.Minute) // 5 tentatives par minute
 
