@@ -17,6 +17,10 @@ type Query struct {
 
 	InsertPost  string
 	InsertTopic string
+	GetCreatedAt string
+	UpdateUsername string
+	UpdateEmail string
+	UpdatePassword string
 }
 
 var query Query
@@ -30,6 +34,14 @@ func DefineRequests() {
 	// Sql.UpdateEmailRequest = `UPDATE user SET email = ? WHERE id = ?`
 	// Sql.UpdatePasswordRequest = `UPDATE user SET password = ? WHERE id = ?`
 	query.InsertTopic = `INSERT INTO topics (id, title, content, category_id, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`
+	query.GetEmail = `SELECT email FROM users WHERE id = ?`
+	query.GetCreatedAt = `SELECT created_at FROM users WHERE id = ?`
+	query.GetPassword = `SELECT password FROM users WHERE id = ?`
+	query.UpdateUsername = `UPDATE users SET username = ? WHERE id = ?`
+    query.UpdateEmail = `UPDATE users SET email = ? WHERE id = ?`
+    query.UpdatePassword = `UPDATE users SET password = ? WHERE id = ?`
+    
+
 }
 
 // USERS
@@ -99,6 +111,10 @@ func GetUserID(username string) int {
 }
 
 func GetUsername(id int) string {
+	if id == 0 {
+		return ""
+	}
+	
 	var username string
 	database.QueryRow(query.GetUsername, id).Scan(&username)
 	return username
